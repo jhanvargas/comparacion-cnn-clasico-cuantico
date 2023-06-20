@@ -14,6 +14,11 @@ práctica y replicable de la eficacia y eficiencia de los modelos de CNN en amba
 un punto de partida para futuras investigaciones en el área.
 
 
+## Funcionamiento del repositorio
+
+Dentro del directorio `docs` se encuentra el entregable II de seminario.
+El notebbook con la exploración se encuentra en la ruta `python/jupyer_notebooks/`.
+
 
 ## Instalación Qiskit
 
