@@ -4,6 +4,9 @@ import numpy as np
 from torch.utils.data import DataLoader
 from torchvision import datasets, transforms
 
+# Own libraries
+from python.metadata.path import Path
+
 
 def generate_data(
     n_samples: int, batch_size: int, train: bool = True
@@ -29,7 +32,7 @@ def generate_data(
 
     """
     data = datasets.MNIST(
-        root="./data",
+        root=Path.data,
         train=train,
         download=True,
         transform=transforms.Compose([transforms.ToTensor()]),
