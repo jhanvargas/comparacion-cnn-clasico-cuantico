@@ -6,7 +6,7 @@ from python.metadata.path import Path
 
 def executor():
     config = read_yaml(Path.config)['dataset']
-    download = config['download_dataset']
+    download = config['download']
 
     if download:
         dataset = config['dataset_name']
