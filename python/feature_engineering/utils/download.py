@@ -1,7 +1,4 @@
 # External libraries
-import os
-import zipfile
-
 from kaggle.api.kaggle_api_extended import KaggleApi
 
 # Own libraries
