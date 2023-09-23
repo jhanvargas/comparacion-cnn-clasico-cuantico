@@ -88,6 +88,14 @@ def create_qnn() -> EstimatorQNN:
         qnn = create_qnn()
 
     """
+    # circuito cuantico preestablecido. Validar que tipo de circuito es exactamente
+    # validar simulador
+    # validar consumo de recursos
+    # menor margen de error
+    # 5 Qbits ibm bogota - no bogota no belen
+    # metricas de validación - matrix de confusión! F1, necesario 4 metrica
+    # sistemas de auto-atención
+    # transferencia de aprendizaje
     feature_map = ZZFeatureMap(2)
     ansatz = RealAmplitudes(2, reps=1)
     qc = QuantumCircuit(2)

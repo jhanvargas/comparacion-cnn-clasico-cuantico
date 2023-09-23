@@ -18,7 +18,7 @@ if __name__ == '__main__':
     manual_seed(42)
 
     # Loading data
-    train_loader = generate_data(n_samples=100, batch_size=1)
+    train_loader = generate_data(n_samples=1000, batch_size=1)
     test_loader = generate_data(n_samples=100, batch_size=1, train=False)
 
     plot_data(train_loader, n_samples_show=6)
