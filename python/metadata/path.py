@@ -28,4 +28,6 @@ class Path:
 
     val = os.path.join(images, 'val.csv')
 
+    best_model = os.path.join('output', 'best_model.hdf5')
+
     portrait_data = os.path.join('output', 'portrait_data.parquet')
