@@ -1,3 +1,4 @@
 dataset:
   dataset_name: kazushiadachi/human-portrait-or-not-128128-binary-and-rgb
   download: False
+  split_data: True

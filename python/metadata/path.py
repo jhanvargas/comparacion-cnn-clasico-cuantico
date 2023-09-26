@@ -18,4 +18,14 @@ class Path:
 
     images = os.path.join('output', 'binary')
 
+    test_binary = os.path.join(images, 'test_binary.csv')
+
+    train_binary = os.path.join(images, 'train_binary.csv')
+
+    train = os.path.join(images, 'train.csv')
+
+    test = os.path.join(images, 'test.csv')
+
+    val = os.path.join(images, 'val.csv')
+
     portrait_data = os.path.join('output', 'portrait_data.parquet')

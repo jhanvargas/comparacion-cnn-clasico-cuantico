@@ -3,6 +3,7 @@ import os
 import pandas as pd
 import numpy as np
 
+from sklearn.model_selection import train_test_split
 from skimage import io
 from skimage.transform import resize
 
@@ -60,3 +61,40 @@ def create_table(
         df.to_parquet(Path.portrait_data, index=False)
     else:
         return df
+
+
+def split_data(
+    train_df: pd.DataFrame,
+    test_df: pd.DataFrame,
+    validation_split: float = 0.2,
+    test_split: float = 0.1,
+    random_state: int = None,
+) -> tuple:
+    """Divide los datos de entrenamiento y prueba en conjuntos de entrenamiento,
+        validación y prueba de forma aleatoria.
+
+    Args:
+        train_df: DataFrame con datos de entrenamiento.
+        test_df: DataFrame con datos de prueba.
+        validation_split: Proporción de datos de entrenamiento para usar como conjunto de
+            validación.
+        test_split: Proporción de datos de prueba para usar como conjunto de validación.
+        random_state: Semilla para la generación de números aleatorios.
+
+    Returns:
+        Una tupla que contiene tres DataFrames: (train_data, validation_data, test_data).
+    """
+    # Dividir los datos de entrenamiento en entrenamiento y validación
+    train_data, validation_data = train_test_split(
+        train_df, test_size=validation_split, random_state=random_state
+    )
+
+    # Dividir los datos de prueba en prueba y validación (si es necesario)
+    if test_split > 0:
+        test_data, validation_data = train_test_split(
+            test_df, test_size=test_split, random_state=random_state
+        )
+    else:
+        test_data = test_df
+
+    return train_data, validation_data, test_data
