@@ -31,6 +31,10 @@ def executor():
             lambda x: Path.images + x[1:]
         )
 
+        renames = {'x:image': 'path', 'y:label': 'label'}
+        train_binary.rename(columns=renames, inplace=True)
+        test_binary.rename(columns=renames, inplace=True)
+
         train_data, validation_data, test_data = split_data(
             train_binary,
             test_binary,
