@@ -1,7 +1,7 @@
 # Own libraries
 from python.feature_engineering.utils.download import download_dataset
-from python.utils.readers import read_yaml
 from python.metadata.path import Path
+from python.utils.readers import read_yaml
 
 
 def executor():
