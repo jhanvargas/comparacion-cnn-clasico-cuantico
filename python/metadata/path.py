@@ -2,32 +2,55 @@ import os
 
 
 class Path:
-    """Paths required for project execution."""
+    """Rutas requeridas para ejecución del proyecto."""
 
-    data = os.path.join('..', '..', 'data')
+    best_weights = os.path.join('output', 'best_weights_classic.hdf5')
+    """Archivo com mejores pesos en CNN clásica."""
+
+    classic_model = os.path.join('output', 'classic_cnn.h5')
+    """Archivo com modelo clásico."""
+
+    cnn_classic_plot = os.path.join('output', 'classic_cnn.png')
+    """Imagen con comportamiento de entrenamiento y validación clásico."""
 
     config = os.path.join('input', 'config.yaml')
+    """Archivo de configuración de pipelines."""
 
-    kaggle_config = os.path.join('input', 'kaggle.json')
+    data = os.path.join('..', '..', 'data')
+    """Ruta de data desde modulo de ejemplos."""
 
     google_config = os.path.join('input', 'google_drive.json')
-
-    qnn_model_example = os.path.join('..', '..', 'output', 'model_train.pt')
-
-    output = os.path.join('output')
+    """Archivo de configuración de google drive."""
 
     images = os.path.join('output', 'binary')
+    """Ruta a carpeta con imágenes del proyecto."""
 
-    test_binary = os.path.join(images, 'test_binary.csv')
+    kaggle_config = os.path.join('input', 'kaggle.json')
+    """Archivo de configuración de kaggle."""
 
-    train_binary = os.path.join(images, 'train_binary.csv')
+    output = os.path.join('output')
+    """Ruta a carpeta de salida."""
 
-    train = os.path.join(images, 'train.csv')
-
-    test = os.path.join(images, 'test.csv')
-
-    val = os.path.join(images, 'val.csv')
-
-    best_model = os.path.join('output', 'best_model.hdf5')
+    portrait = os.path.join('output', 'binary', 'portrait')
+    """Ruta a imágenes de retratos."""
 
     portrait_data = os.path.join('output', 'portrait_data.parquet')
+    """Archivo con df de imágenes en arreglo."""
+
+    qnn_model_example = os.path.join('..', '..', 'output', 'model_train.pt')
+    """Modelo de qnn de ejemplos."""
+
+    test = os.path.join(images, 'test.csv')
+    """Archivo con datos de imágenes de testeo."""
+
+    test_binary = os.path.join(images, 'test_binary.csv')
+    """Ruta de df de testeo."""
+
+    train = os.path.join(images, 'train.csv')
+    """Archivo con datos de imágenes de entrenamiento."""
+
+    train_binary = os.path.join(images, 'train_binary.csv')
+    """Ruta de df de entrenamiento."""
+
+    val = os.path.join(images, 'val.csv')
+    """Archivo con datos de imágenes de validación."""
