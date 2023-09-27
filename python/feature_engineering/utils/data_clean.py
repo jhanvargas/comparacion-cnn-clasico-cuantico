@@ -5,7 +5,6 @@ import os
 import pandas as pd
 import random
 
-
 from sklearn.model_selection import train_test_split
 from skimage import io
 from skimage.transform import resize
@@ -79,20 +78,21 @@ def split_data(
     Args:
         train_df: DataFrame con datos de entrenamiento.
         test_df: DataFrame con datos de prueba.
-        validation_split: Proporción de datos de entrenamiento para usar como conjunto de
+        validation_split: Proporción de datos de entrenamiento para usar como
+            conjunto de validación.
+        test_split: Proporción de datos de prueba para usar como conjunto de
             validación.
-        test_split: Proporción de datos de prueba para usar como conjunto de validación.
         random_state: Semilla para la generación de números aleatorios.
 
     Returns:
-        Una tupla que contiene tres DataFrames: (train_data, validation_data, test_data).
+        Una tupla que contiene tres DataFrames:
+            (train_data, validation_data, test_data).
+
     """
-    # Dividir los datos de entrenamiento en entrenamiento y validación
     train_data, validation_data = train_test_split(
         train_df, test_size=validation_split, random_state=random_state
     )
 
-    # Dividir los datos de prueba en prueba y validación (si es necesario)
     if test_split > 0:
         test_data, validation_data = train_test_split(
             test_df, test_size=test_split, random_state=random_state
