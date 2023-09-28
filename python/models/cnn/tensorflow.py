@@ -16,7 +16,7 @@ from python.utils.readers import read_yaml
 
 
 def tensorflow_model():
-    """Pipeline de modelo de CNN clásica."""
+    """Pipeline de modelo de CNN clásica con tensorflow."""
 
     config = read_yaml(Path.config)['tf_cnn_classic']
     train = config['train']
