@@ -10,7 +10,13 @@ class Path:
     classic_model = os.path.join('output', 'classic_cnn.h5')
     """Archivo com modelo clásico."""
 
+    classic_model_torch = os.path.join('output', 'classic_cnn_torch.pth')
+    """Archivo com modelo clásico."""
+
     cnn_classic_plot = os.path.join('output', 'classic_cnn.png')
+    """Imagen con comportamiento de entrenamiento y validación clásico."""
+
+    cnn_torch_plot = os.path.join('output', 'cnn_torch.png')
     """Imagen con comportamiento de entrenamiento y validación clásico."""
 
     config = os.path.join('input', 'config.yaml')
