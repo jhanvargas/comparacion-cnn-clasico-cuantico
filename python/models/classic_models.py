@@ -6,8 +6,8 @@ from keras.models import load_model
 
 # Own libraries
 from python.metadata.path import Path
-from python.models.utils.cnn import (
-    create_cnn_model,
+from python.models.utils.tf_cnn import (
+    create_tf_cnn,
     flow_generator,
     image_generator,
     plot_generate,
@@ -42,7 +42,7 @@ def executor():
             save_best_only=True,
         )
 
-        model = create_cnn_model(input_shape=(32, 32, 3))
+        model = create_tf_cnn(input_shape=(32, 32, 3))
         print(model.summary())
 
         hist = model.fit(

@@ -16,8 +16,9 @@ from keras.models import Sequential
 from keras.preprocessing.image import DataFrameIterator, ImageDataGenerator
 
 
-def create_cnn_model(input_shape: tuple = (128, 128, 1)) -> Sequential:
-    """Crea y compila un modelo de red neuronal convolucional (CNN).
+def create_tf_cnn(input_shape: tuple = (128, 128, 1)) -> Sequential:
+    """Crea y compila un modelo de red neuronal convolucional (CNN) con
+        tensorflow.
 
     Args:
         input_shape: Tamaño de la entrada (altura, ancho, canales).
@@ -151,7 +152,7 @@ def flow_generator(
         x_col='path',  # Nombre de la columna con las rutas de las imágenes
         y_col='label',  # Nombre de la columna con las etiquetas
         target_size=target,  # Tamaño objetivo de las imágenes
-        batch_size=batch,  # Tamaño del lote (batch size)
+        batch_size=batch,  # Tamaño del lote
         class_mode='binary',
     )
 
