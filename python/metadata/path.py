@@ -22,6 +22,9 @@ class Path:
     google_config = os.path.join('input', 'google_drive.json')
     """Archivo de configuración de google drive."""
 
+    ibm_config = os.path.join('input', 'ibm_quamtum.yaml')
+    """API key para IBM Quantum."""
+
     images = os.path.join('output', 'binary')
     """Ruta a carpeta con imágenes del proyecto."""
 
