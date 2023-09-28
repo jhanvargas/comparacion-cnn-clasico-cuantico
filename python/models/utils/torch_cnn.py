@@ -7,11 +7,15 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 from PIL import Image
+from tqdm import tqdm
 from torch.utils.data import Dataset
 from torchvision import transforms
 from torchvision.utils import make_grid
 from torch.utils.data.dataloader import DataLoader
 from typing import Tuple
+
+# Own libraries
+from python.metadata.path import Path
 
 
 class LoadDataset(Dataset):
@@ -276,6 +280,86 @@ def predict_data(
     test_acc = num_correct / num_samples
 
     return test_loss, test_acc
+
+
+def fit_model(
+    model: nn.Module,
+    train_loader: DataLoader,
+    val_loader: DataLoader,
+    loss_function: callable,
+    optimizer: callable,
+    epochs: int = 10,
+) -> dict:
+    """Entrena un modelo de red neuronal de PyTorch.
+
+    Args:
+        model: Modelo de red neuronal a entrenar.
+        train_loader: DataLoader de entrenamiento.
+        val_loader: DataLoader de validación.
+        loss_function: Función de pérdida para el entrenamiento.
+        optimizer: Optimizador para el entrenamiento.
+        epochs: Número de épocas de entrenamiento. Por defecto, 10.
+
+    Returns:
+        dict: Un diccionario que contiene históricos de pérdida y precisión.
+
+    """
+    train_losses, test_losses, train_accuracy, test_accuracy = [], [], [], []
+
+    for epoch in range(epochs):
+        num_correct_train = 0
+        num_samples_train = 0
+        for batch, (x_train, y_train) in tqdm(
+            enumerate(train_loader), total=len(train_loader)
+        ):
+            x_train = x_train.float()
+            y_train = y_train.float()
+
+            y_train = y_train.view(-1, 1)
+
+            # Forward propagation
+            train_predict = model(x_train)
+            train_loss = loss_function(train_predict, y_train)
+
+            # Calculate train accuracy
+            with torch.no_grad():
+                rounded_train_predict = torch.round(train_predict)
+                num_correct_train += torch.sum(rounded_train_predict == y_train)
+                num_samples_train += len(y_train)
+
+            # Backward propagation
+            optimizer.zero_grad()
+            train_loss.backward()
+
+            # Gradient descent
+            optimizer.step()
+
+        train_acc = num_correct_train / num_samples_train
+        test_loss, test_acc = predict_data(model, val_loader, loss_function)
+
+        train_losses.append(train_loss.item())
+        test_losses.append(test_loss.item())
+        train_accuracy.append(train_acc.item())
+        test_accuracy.append(test_acc.item())
+
+        print(
+            f'Epoch {epoch + 1} '
+            f'| Train Loss: {train_loss.item():.4f} '
+            f'| Test Loss: {test_loss.item():.4f} '
+            f'| Train Acc: {train_acc.item() * 100:.2f}% '
+            f'| Test Acc: {test_acc.item() * 100:.2f}%'
+        )
+
+    hist = {
+        'accuracy': train_accuracy,
+        'val_accuracy': test_accuracy,
+        'loss': train_losses,
+        'val_loss': test_losses,
+    }
+
+    torch.save(model.state_dict(), Path.classic_model_torch)
+
+    return hist
 
 
 def plot_generate(hist: dict, path_save: str = None) -> None:
