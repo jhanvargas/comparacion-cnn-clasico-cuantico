@@ -31,6 +31,9 @@ def tensorflow_model():
     batch = config['batch_size']
     target = tuple(config['input_target'])
     epochs = config['epochs']
+    optimizer = config['optimizer']
+    loss = config['loss']
+    metrics = config['metrics']
 
     if train:
         train = pd.read_csv(Path.train, converters={'label': str})
@@ -49,7 +52,12 @@ def tensorflow_model():
             save_best_only=True,
         )
 
-        model = create_tf_cnn(input_shape=(32, 32, 3))
+        model = create_tf_cnn(
+            input_shape=(32, 32, 3),
+            optimizer=optimizer,
+            loss=loss,
+            metrics=metrics,
+        )
         print(model.summary())
 
         hist = model.fit(

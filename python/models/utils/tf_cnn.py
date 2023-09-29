@@ -16,12 +16,17 @@ from keras.models import Sequential
 from keras.preprocessing.image import DataFrameIterator, ImageDataGenerator
 
 
-def create_tf_cnn(input_shape: tuple = (128, 128, 1)) -> Sequential:
+def create_tf_cnn(
+    input_shape: tuple, optimizer: str, loss: str, metrics: list
+) -> Sequential:
     """Crea y compila un modelo de red neuronal convolucional (CNN) con
         tensorflow.
 
     Args:
         input_shape: Tamaño de la entrada (altura, ancho, canales).
+        optimizer:
+        loss:
+        metrics:
 
     Returns:
         Sequential: Modelo de CNN creado y compilado.
@@ -90,9 +95,7 @@ def create_tf_cnn(input_shape: tuple = (128, 128, 1)) -> Sequential:
 
     model.add(Dense(1, activation='sigmoid'))
 
-    model.compile(
-        optimizer='adam', loss='binary_crossentropy', metrics=['accuracy']
-    )
+    model.compile(optimizer=optimizer, loss=loss, metrics=metrics)
 
     return model
 
