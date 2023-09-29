@@ -2,6 +2,7 @@
 import pandas as pd
 
 # Own libraries
+from python.feature_engineering.utils.data_clean import show_random_image
 from python.feature_engineering.utils.data_clean import split_data
 from python.feature_engineering.utils.download import download_dataset
 from python.metadata.path import Path
@@ -14,6 +15,10 @@ def executor():
     config = read_yaml(Path.config)['dataset']
     download = config['download']
     split = config['split_data']
+    show_im = config['show_random_image']
+
+    if show_im:
+        show_random_image(Path.portrait)
 
     if download:
         dataset = config['dataset_name']
