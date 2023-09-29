@@ -1,12 +1,32 @@
 dataset:
-  dataset_name: kazushiadachi/human-portrait-or-not-128128-binary-and-rgb
-  download: False
-  split_data: False
+    dataset_name: kazushiadachi/human-portrait-or-not-128128-binary-and-rgb
+    show_random_image: False
+    download: False
+    split_data: False
 
-tf_cnn_classic:
-  train: False
-  test: True
+cnn_models:
+    tf_cnn_classic:
+        train: False
+        test: True
+        batch_size: 32
+        input_target: [32, 32]
+        epochs: 10
+        optimizer: adam
+        loss: binary_crossentropy
+        metrics: [accuracy]
 
-torch_cnn_classic:
-  train: False
-  test: True
+    torch_cnn_classic:
+        train: False
+        test: True
+        batch_size: 32
+        input_target: [ 32, 1, 32, 32 ]
+        epochs: 10
+        learning_rate: 0.001
+
+    hybrid_cnn:
+        train: False
+        test: True
+        batch_size: 32
+        input_target: [ 32, 1, 32, 32 ]
+        epochs: 10
+        learning_rate: 0.001
