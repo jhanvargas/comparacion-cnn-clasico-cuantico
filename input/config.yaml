@@ -3,6 +3,10 @@ dataset:
   download: False
   split_data: False
 
-cnn_classic:
+tf_cnn_classic:
+  train: False
+  test: True
+
+torch_cnn_classic:
   train: False
   test: True
