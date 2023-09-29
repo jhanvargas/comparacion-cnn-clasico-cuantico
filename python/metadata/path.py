@@ -4,20 +4,26 @@ import os
 class Path:
     """Rutas requeridas para ejecución del proyecto."""
 
-    best_weights = os.path.join('output', 'best_weights_classic_100.hdf5')
-    """Archivo com mejores pesos en CNN clásica."""
+    best_weights_tf = os.path.join('output', 'best_weights_classic_tf.hdf5')
+    """Archivo com mejores pesos en CNN clásica con Tensorflow."""
 
-    classic_model = os.path.join('output', 'classic_cnn.h5')
-    """Archivo com modelo clásico."""
+    classic_model_tf = os.path.join('output', 'classic_cnn_tf.h5')
+    """Archivo con modelo clásico usando Tensorflow."""
 
     classic_model_torch = os.path.join('output', 'classic_cnn_torch.pth')
+    """Archivo com modelo clásico usando PyTorch."""
+
+    hybrid_model_torch = os.path.join('output', 'hybrid_cnn_torch.pth')
     """Archivo com modelo clásico."""
 
-    cnn_classic_plot = os.path.join('output', 'classic_cnn.png')
+    cnn_tf_plot = os.path.join('output', 'plot_tf_cnn.png')
+    """Imagen con comportamiento de entrenamiento y validación clásico tf."""
+
+    cnn_torch_plot = os.path.join('output', 'plot_torch_cnn.png')
     """Imagen con comportamiento de entrenamiento y validación clásico."""
 
-    cnn_torch_plot = os.path.join('output', 'cnn_torch.png')
-    """Imagen con comportamiento de entrenamiento y validación clásico."""
+    cnn_hybrid_plot = os.path.join('output', 'plot_hybrid_cnn.png')
+    """Imagen con comportamiento de entrenamiento y validación híbrido."""
 
     config = os.path.join('input', 'config.yaml')
     """Archivo de configuración de pipelines."""
