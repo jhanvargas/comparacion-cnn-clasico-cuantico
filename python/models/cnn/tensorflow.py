@@ -18,12 +18,13 @@ from python.utils.readers import read_yaml
 def tensorflow_model():
     """Pipeline de modelo de CNN clásica con tensorflow."""
 
-    config = read_yaml(Path.config)['tf_cnn_classic']
+    config = read_yaml(Path.config)['cnn_models']['tf_cnn_classic']
     train = config['train']
     test = config['test']
 
-    batch = 32
-    target = (32, 32)
+    batch = config['batch_size']
+    target = tuple(config['input_target'])
+    epochs = config['epochs']
 
     if train:
         train = pd.read_csv(Path.train, converters={'label': str})
@@ -36,7 +37,7 @@ def tensorflow_model():
         val_generator = flow_generator(val, test_datagen, target, batch)
 
         checkpoint = ModelCheckpoint(
-            Path.best_weights,
+            Path.best_weights_tf,
             monitor='val_accuracy',
             verbose=1,
             save_best_only=True,
@@ -50,20 +51,20 @@ def tensorflow_model():
             steps_per_epoch=train_generator.samples // batch,
             validation_data=val_generator,
             validation_steps=val_generator.samples // batch,
-            epochs=10,
+            epochs=epochs,
             callbacks=[checkpoint],
         )
 
-        model.save(Path.classic_model)
+        model.save(Path.classic_model_tf)
 
-        plot_generate(hist, Path.cnn_classic_plot)
+        plot_generate(hist, Path.cnn_tf_plot)
 
     if test:
         test = pd.read_csv(Path.test, converters={'label': str})
         test_datagen = image_generator('test')
         test_generator = flow_generator(test, test_datagen, target, batch)
 
-        model = load_model(Path.classic_model)
-        model.load_weights(Path.best_weights)
+        model = load_model(Path.classic_model_tf)
+        model.load_weights(Path.best_weights_tf)
 
         model.evaluate(test_generator)
