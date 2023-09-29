@@ -4,7 +4,7 @@ import os
 class Path:
     """Rutas requeridas para ejecución del proyecto."""
 
-    best_weights = os.path.join('output', 'best_weights_classic.hdf5')
+    best_weights = os.path.join('output', 'best_weights_classic_100.hdf5')
     """Archivo com mejores pesos en CNN clásica."""
 
     classic_model = os.path.join('output', 'classic_cnn.h5')
