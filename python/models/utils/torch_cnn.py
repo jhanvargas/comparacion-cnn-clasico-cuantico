@@ -289,6 +289,7 @@ def fit_model(
     loss_function: callable,
     optimizer: callable,
     epochs: int = 10,
+    structure: str = 'classic',
 ) -> dict:
     """Entrena un modelo de red neuronal de PyTorch.
 
@@ -299,6 +300,7 @@ def fit_model(
         loss_function: Función de pérdida para el entrenamiento.
         optimizer: Optimizador para el entrenamiento.
         epochs: Número de épocas de entrenamiento. Por defecto, 10.
+        structure:
 
     Returns:
         dict: Un diccionario que contiene históricos de pérdida y precisión.
@@ -357,7 +359,12 @@ def fit_model(
         'val_loss': test_losses,
     }
 
-    torch.save(model.state_dict(), Path.classic_model_torch)
+    if structure == 'classic':
+        torch.save(model.state_dict(), Path.classic_model_torch)
+    elif structure == 'hybrid':
+        torch.save(model.state_dict(), Path.hybrid_model_torch)
+    else:
+        raise NotImplementedError
 
     return hist
 

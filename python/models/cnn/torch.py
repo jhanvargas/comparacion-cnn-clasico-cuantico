@@ -3,7 +3,6 @@ import torch
 
 from torch.utils.data.dataloader import DataLoader
 from torchinfo import summary
-from tqdm import tqdm
 
 # Own libraries
 from python.metadata.path import Path
@@ -23,14 +22,17 @@ def torch_model():
     """Pipeline de modelo de CNN clásica con pyTorch."""
 
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
-    print(device)
+    print(f'PyTorch está utilizando la {device}.')
 
-    config = read_yaml(Path.config)['torch_cnn_classic']
+    config = read_yaml(Path.config)['cnn_models']['torch_cnn_classic']
     train = config['train']
     test = config['test']
 
-    batch_size = 32
-    epochs = 10
+    batch_size = config['batch_size']
+    target = tuple(config['input_target'])
+    epochs = config['epochs']
+    learning_rate = config['learning_rate']
+
     loss_function = torch.nn.BCELoss()
 
     if train:
@@ -46,10 +48,9 @@ def torch_model():
         # show_batch(train_loader)
 
         model = TorchCNN().to(device)
+        summary(model, input_size=target)
 
-        summary(model, input_size=(4, 1, 32, 32))
-
-        optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
+        optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
 
         hist = fit_model(
             model, train_loader, val_loader, loss_function, optimizer, epochs
