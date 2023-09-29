@@ -1,5 +1,6 @@
 # External libraries
 import pandas as pd
+import tensorflow as tf
 
 from keras.callbacks import ModelCheckpoint
 from keras.models import load_model
@@ -17,6 +18,11 @@ from python.utils.readers import read_yaml
 
 def tensorflow_model():
     """Pipeline de modelo de CNN clásica con tensorflow."""
+
+    if tf.config.experimental.list_physical_devices('GPU'):
+        print('TensorFlow está utilizando la GPU.')
+    else:
+        print('TensorFlow no está utilizando la GPU.')
 
     config = read_yaml(Path.config)['cnn_models']['tf_cnn_classic']
     train = config['train']
