@@ -55,6 +55,9 @@ class Path:
     qnn_model_example = os.path.join('..', '..', 'output', 'model_train.pt')
     """Modelo de qnn de ejemplos."""
 
+    q_circuit = os.path.join('output', 'q_circuit.png')
+    """Diagrama del circuito cuántico."""
+
     test = os.path.join(images, 'test.csv')
     """Archivo con datos de imágenes de testeo."""
 

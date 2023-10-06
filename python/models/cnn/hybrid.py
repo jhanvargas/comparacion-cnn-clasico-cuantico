@@ -15,7 +15,7 @@ from python.models.utils.torch_cnn import (
     predict_data,
     fit_model,
 )
-from python.models.utils.hybrid_cnn import HybridCNN, create_qnn
+from python.models.utils.hybrid_cnn import HybridCNN, create_qnn, save_q_circuit
 from python.utils.readers import read_yaml
 from python.ibm_quantum.utils.connect import get_ibm_quantum
 
@@ -53,6 +53,8 @@ def hybrid_model():
         qnn = create_qnn()
         model = HybridCNN(qnn).to(device)
 
+        save_q_circuit(qnn, Path.q_circuit)
+
         summary(model, input_size=target)
 
         optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
@@ -76,7 +78,7 @@ def hybrid_model():
 
         qnn = create_qnn()
         model = HybridCNN(qnn).to(device)
-        model.load_state_dict(torch.load(Path.classic_model_torch))
+        model.load_state_dict(torch.load(Path.hybrid_model_torch))
 
         test_loss, test_acc = predict_data(model, test_loader, loss_function)
 

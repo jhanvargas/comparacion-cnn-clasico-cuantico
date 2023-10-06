@@ -1,4 +1,5 @@
 # External libraries
+import matplotlib.pyplot as plt
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -7,6 +8,7 @@ from qiskit import QuantumCircuit
 from qiskit.circuit.library import RealAmplitudes, ZZFeatureMap
 from qiskit_machine_learning.connectors import TorchConnector
 from qiskit_machine_learning.neural_networks import EstimatorQNN
+from qiskit.visualization import circuit_drawer
 
 
 class HybridCNN(nn.Module):
@@ -155,3 +157,23 @@ def create_qnn() -> EstimatorQNN:
         input_gradients=True,
     )
     return qnn
+
+
+def save_q_circuit(qnn: EstimatorQNN, path_save: str = None) -> None:
+    """Guarda un circuito cuántico en una representación gráfica.
+
+    Args:
+        qnn: El Quantum Neural Network (QNN) cuyo circuito se va a guardar.
+        path_save: La ruta donde se guardará la imagen del circuito.
+
+    Example:
+        save_q_circuit(qnn, "circuit.png")
+
+    """
+    circuit_drawer(qnn.circuit, output='mpl')
+
+    if path_save:
+        plt.savefig(path_save)
+
+    plt.show()
+
