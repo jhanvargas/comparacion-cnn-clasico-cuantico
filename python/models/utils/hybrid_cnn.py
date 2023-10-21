@@ -3,12 +3,27 @@ import matplotlib.pyplot as plt
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-
+import numpy as np
 from qiskit import QuantumCircuit
 from qiskit.circuit.library import RealAmplitudes, ZZFeatureMap
 from qiskit_machine_learning.connectors import TorchConnector
 from qiskit_machine_learning.neural_networks import EstimatorQNN
 from qiskit.visualization import circuit_drawer
+
+from qiskit_machine_learning.neural_networks import OpflowQNN
+from qiskit.utils import QuantumInstance
+from python.ibm_quantum.utils.connect import get_ibm_quantum
+from qiskit_machine_learning.neural_networks import TwoLayerQNN
+
+from qiskit import Aer, QuantumCircuit
+from qiskit.utils import QuantumInstance
+from qiskit.opflow import AerPauliExpectation
+from qiskit.circuit import Parameter
+
+backend = get_ibm_quantum()
+quantum_instance = QuantumInstance(backend)
+
+qi = QuantumInstance(Aer.get_backend('statevector_simulator'))
 
 
 class HybridCNN(nn.Module):
@@ -40,7 +55,7 @@ class HybridCNN(nn.Module):
 
     """
 
-    def __init__(self, qnn: EstimatorQNN):
+    def __init__(self, qnn: TwoLayerQNN):
         """Inicializa una instancia de la clase TorchCNN."""
 
         super().__init__()
@@ -144,18 +159,33 @@ def create_qnn() -> EstimatorQNN:
         qnn = create_qnn()
 
     """
+    # https://quantum-computing.ibm.com/services/resources?tab=yours&system=ibm_nairobi&view=table
     feature_map = ZZFeatureMap(2)
-    ansatz = RealAmplitudes(2, reps=1)
-    qc = QuantumCircuit(2)
-    qc.compose(feature_map, inplace=True)
-    qc.compose(ansatz, inplace=True)
+    ansatz = RealAmplitudes(2, reps=1, entanglement='linear')
 
-    qnn = EstimatorQNN(
+    print(ansatz.parameters)
+
+    param_dict = {param: np.pi / 4 for param in ansatz.parameters}
+    ansatz.assign_parameters(param_dict)
+
+    print(param_dict)
+
+    # qc = QuantumCircuit(2)
+    # qc.compose(feature_map, inplace=True)
+    # qc.compose(ansatz, inplace=True)
+
+    """qnn = EstimatorQNN(
         circuit=qc,
         input_params=feature_map.parameters,
         weight_params=ansatz.parameters,
         input_gradients=True,
+    )"""
+    qnn = TwoLayerQNN(
+        2, feature_map, ansatz,
+        exp_val=AerPauliExpectation(),
+        quantum_instance=qi
     )
+
     return qnn
 
 

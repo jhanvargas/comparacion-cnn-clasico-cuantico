@@ -19,12 +19,11 @@ from python.models.utils.hybrid_cnn import HybridCNN, create_qnn, save_q_circuit
 from python.utils.readers import read_yaml
 from python.ibm_quantum.utils.connect import get_ibm_quantum
 
+from qiskit.utils import QuantumInstance
+
 
 def hybrid_model():
     """Pipeline de modelo de CNN clásica con hybrid pyTorch."""
-
-    backend = get_ibm_quantum()
-    print(backend)
 
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
     print(f'PyTorch está utilizando la {device}.')
@@ -51,6 +50,7 @@ def hybrid_model():
         val_loader = DataLoader(val_dataset, batch_size)
 
         qnn = create_qnn()
+        print(qnn.operator)
         model = HybridCNN(qnn).to(device)
 
         save_q_circuit(qnn, Path.q_circuit)
