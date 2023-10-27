@@ -3,27 +3,17 @@ import matplotlib.pyplot as plt
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-import numpy as np
-from qiskit import QuantumCircuit
-from qiskit.circuit.library import RealAmplitudes, ZZFeatureMap
-from qiskit_machine_learning.connectors import TorchConnector
-from qiskit_machine_learning.neural_networks import EstimatorQNN
-from qiskit.visualization import circuit_drawer
 
-from qiskit_machine_learning.neural_networks import OpflowQNN
+from qiskit import Aer
+from qiskit.circuit.library import RealAmplitudes, ZZFeatureMap
+from qiskit.opflow import AerPauliExpectation
 from qiskit.utils import QuantumInstance
-from python.ibm_quantum.utils.connect import get_ibm_quantum
+from qiskit.visualization import circuit_drawer
+from qiskit_machine_learning.connectors import TorchConnector
 from qiskit_machine_learning.neural_networks import TwoLayerQNN
 
-from qiskit import Aer, QuantumCircuit
-from qiskit.utils import QuantumInstance
-from qiskit.opflow import AerPauliExpectation
-from qiskit.circuit import Parameter
-
-backend = get_ibm_quantum()
-quantum_instance = QuantumInstance(backend)
-
-qi = QuantumInstance(Aer.get_backend('statevector_simulator'))
+# Own libraries
+from python.ibm_quantum.utils.connect import get_ibm_quantum
 
 
 class HybridCNN(nn.Module):
@@ -144,13 +134,16 @@ class HybridCNN(nn.Module):
         return x
 
 
-def create_qnn() -> EstimatorQNN:
+def create_qnn(backend: bool = False) -> TwoLayerQNN:
     """Creates and configures a Quantum Neural Network (QNN) using Qiskit.
 
     This function constructs a QNN by combining a quantum feature map and a
     quantum ansatz.
     The QNN is configured with input parameters and weight parameters,
     and input gradients are enabled for quantum gradient-based optimization.
+
+    Args:
+        backend
 
     Returns:
          A configured QNN for quantum machine learning.
@@ -160,36 +153,30 @@ def create_qnn() -> EstimatorQNN:
 
     """
     # https://quantum-computing.ibm.com/services/resources?tab=yours&system=ibm_nairobi&view=table
+
+    if backend:
+        backend = get_ibm_quantum()
+    else:
+        backend = QuantumInstance(Aer.get_backend('statevector_simulator'))
+
     feature_map = ZZFeatureMap(2)
     ansatz = RealAmplitudes(2, reps=1, entanglement='linear')
 
     print(ansatz.parameters)
 
-    param_dict = {param: np.pi / 4 for param in ansatz.parameters}
-    ansatz.assign_parameters(param_dict)
+    # param_dict = {param: np.pi / 4 for param in ansatz.parameters}
+    # ansatz.assign_parameters(param_dict)
 
-    print(param_dict)
-
-    # qc = QuantumCircuit(2)
-    # qc.compose(feature_map, inplace=True)
-    # qc.compose(ansatz, inplace=True)
-
-    """qnn = EstimatorQNN(
-        circuit=qc,
-        input_params=feature_map.parameters,
-        weight_params=ansatz.parameters,
-        input_gradients=True,
-    )"""
     qnn = TwoLayerQNN(
         2, feature_map, ansatz,
         exp_val=AerPauliExpectation(),
-        quantum_instance=qi
+        quantum_instance=backend,
     )
 
     return qnn
 
 
-def save_q_circuit(qnn: EstimatorQNN, path_save: str = None) -> None:
+def save_q_circuit(qnn: TwoLayerQNN, path_save: str = None) -> None:
     """Guarda un circuito cuántico en una representación gráfica.
 
     Args:
@@ -206,4 +193,3 @@ def save_q_circuit(qnn: EstimatorQNN, path_save: str = None) -> None:
         plt.savefig(path_save)
 
     plt.show()
-

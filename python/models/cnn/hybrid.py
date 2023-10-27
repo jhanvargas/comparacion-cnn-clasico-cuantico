@@ -1,25 +1,21 @@
 # External libraries
 import torch
-
 from torch.utils.data.dataloader import DataLoader
 from torchinfo import summary
-from tqdm import tqdm
 
 # Own libraries
 from python.metadata.path import Path
+from python.models.utils.hybrid_cnn import (
+    HybridCNN, create_qnn, save_q_circuit
+)
 from python.models.utils.torch_cnn import (
     LoadDataset,
+    fit_model,
     image_generator,
     plot_generate,
-    show_batch,
     predict_data,
-    fit_model,
 )
-from python.models.utils.hybrid_cnn import HybridCNN, create_qnn, save_q_circuit
 from python.utils.readers import read_yaml
-from python.ibm_quantum.utils.connect import get_ibm_quantum
-
-from qiskit.utils import QuantumInstance
 
 
 def hybrid_model():
@@ -36,6 +32,7 @@ def hybrid_model():
     target = tuple(config['input_target'])
     epochs = config['epochs']
     learning_rate = config['learning_rate']
+    backend = config['backend']
 
     loss_function = torch.nn.BCELoss()
 
@@ -49,7 +46,7 @@ def hybrid_model():
         train_loader = DataLoader(train_dataset, batch_size, shuffle=True)
         val_loader = DataLoader(val_dataset, batch_size)
 
-        qnn = create_qnn()
+        qnn = create_qnn(backend)
         print(qnn.operator)
         model = HybridCNN(qnn).to(device)
 
