@@ -5,3 +5,5 @@
 /output/binary/
 
 /data/
+
+**/__pycache__/
