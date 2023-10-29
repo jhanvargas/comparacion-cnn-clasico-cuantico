@@ -13,8 +13,8 @@ class Path:
     classic_model_torch = os.path.join('output', 'classic_cnn_torch.pth')
     """Archivo com modelo clásico usando PyTorch."""
 
-    hybrid_model_torch = os.path.join('output', 'hybrid_cnn_torch.pth')
-    """Archivo com modelo clásico."""
+    cnn_hybrid_plot = os.path.join('output', 'plot_hybrid_cnn.png')
+    """Imagen con comportamiento de entrenamiento y validación híbrido."""
 
     cnn_tf_plot = os.path.join('output', 'plot_tf_cnn.png')
     """Imagen con comportamiento de entrenamiento y validación clásico tf."""
@@ -22,10 +22,7 @@ class Path:
     cnn_torch_plot = os.path.join('output', 'plot_torch_cnn.png')
     """Imagen con comportamiento de entrenamiento y validación clásico."""
 
-    cnn_hybrid_plot = os.path.join('output', 'plot_hybrid_cnn.png')
-    """Imagen con comportamiento de entrenamiento y validación híbrido."""
-
-    config = os.path.join('input', 'config.yaml')
+    config = os.path.join('config.yaml')
     """Archivo de configuración de pipelines."""
 
     data = os.path.join('..', '..', 'data')
@@ -33,6 +30,9 @@ class Path:
 
     google_config = os.path.join('input', 'google_drive.json')
     """Archivo de configuración de google drive."""
+
+    hybrid_model_torch = os.path.join('output', 'hybrid_cnn_torch.pth')
+    """Archivo com modelo clásico."""
 
     ibm_config = os.path.join('input', 'ibm_quamtum.yaml')
     """API key para IBM Quantum."""
@@ -52,11 +52,11 @@ class Path:
     portrait_data = os.path.join('output', 'portrait_data.parquet')
     """Archivo con df de imágenes en arreglo."""
 
-    qnn_model_example = os.path.join('..', '..', 'output', 'model_train.pt')
-    """Modelo de qnn de ejemplos."""
-
     q_circuit = os.path.join('output', 'q_circuit.png')
     """Diagrama del circuito cuántico."""
+
+    qnn_model_example = os.path.join('..', '..', 'output', 'model_train.pt')
+    """Modelo de qnn de ejemplos."""
 
     test = os.path.join(images, 'test.csv')
     """Archivo con datos de imágenes de testeo."""
