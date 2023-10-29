@@ -16,9 +16,16 @@ from python.models.utils.tf_cnn import (
 from python.utils.readers import read_yaml
 
 
-def tensorflow_model():
-    """Pipeline de modelo de CNN clásica con tensorflow."""
+def tensorflow_model() -> None:
+    """Pipeline de modelo de CNN clásica con tensorflow.
 
+    Crea y entrena un modelo de CNN clásica utilizando TensorFlow. 
+    Si se especifica, también evalúa el modelo en un conjunto de prueba.
+
+    Returns:
+        None
+
+    """
     if tf.config.experimental.list_physical_devices('GPU'):
         print('TensorFlow está utilizando la GPU.')
     else:

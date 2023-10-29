@@ -9,7 +9,7 @@ from python.metadata.path import Path
 from python.utils.readers import read_yaml
 
 
-def executor():
+def executor() -> None:
     """Pipeline para la obtención y organización de datos.
 
     Este script descarga un dataset, muestra una imagen aleatoria del mismo, y 
