@@ -18,10 +18,19 @@ from python.models.utils.torch_cnn import (
 from python.utils.readers import read_yaml
 
 
-def torch_model():
-    """Pipeline de modelo de CNN clásica con pyTorch."""
+def torch_model() -> None:
+    """Pipeline de modelo de CNN clásica con pyTorch.
 
-    device = 'cuda' if torch.cuda.is_available() else 'cpu'
+    Esta función crea y entrena un modelo CNN clásico utilizando PyTorch. 
+    La función carga la configuración desde un archivo YAML,
+    crea los conjuntos de datos de entrenamiento y validación, 
+    y entrena el modelo utilizando el optimizador Adam y la función de pérdida 
+    de entropía cruzada binaria. La función también genera una gráfica de la 
+    pérdida y precisión de entrenamiento y validación, e imprime la precisión 
+    del modelo en el conjunto de datos de prueba.
+
+    """
+    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     print(f'PyTorch está utilizando la {device}.')
 
     config = read_yaml(Path.config)['cnn_models']['torch_cnn_classic']

@@ -3,7 +3,7 @@ from python.feature_engineering import feature_pipeline
 from python.models import neural_networks
 
 
-def main():
+def main() -> None:
     """Ejecuta los pipelines de ingeniería de características y redes neuronales.
 
     Esta función ejecuta los pipelines de ingeniería de características y redes neuronales
