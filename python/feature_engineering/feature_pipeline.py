@@ -10,8 +10,14 @@ from python.utils.readers import read_yaml
 
 
 def executor():
-    """Pipeline para la obtención y organización de datos."""
+    """Pipeline para la obtención y organización de datos.
 
+    Este script descarga un dataset, muestra una imagen aleatoria del mismo, y 
+     divide los datos en conjuntos de entrenamiento, validación y prueba. 
+     Los datos se guardan en archivos CSV en las rutas especificadas en el 
+     archivo de configuración.
+
+    """
     config = read_yaml(Path.config)['dataset']
     download = config['download']
     split = config['split_data']
