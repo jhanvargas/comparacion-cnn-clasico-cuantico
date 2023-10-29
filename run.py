@@ -1,11 +1,18 @@
-# Own libraries
+# Librerías propias
 from python.feature_engineering import feature_pipeline
 from python.models import neural_networks
 
 
-if __name__ == '__main__':
-    feature_pipeline.executor()
-    """Pipeline de feature engineering."""
+def main():
+    """Ejecuta los pipelines de ingeniería de características y redes neuronales.
 
+    Esta función ejecuta los pipelines de ingeniería de características y redes neuronales
+    definidos en los módulos feature_pipeline y neural_networks, respectivamente.
+
+    """
+    feature_pipeline.executor()
     neural_networks.executor()
-    """Pipeline de modelos."""
+
+
+if __name__ == '__main__':
+    main()
