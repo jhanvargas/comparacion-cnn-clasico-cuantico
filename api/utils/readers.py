@@ -2,8 +2,6 @@
 from io import BytesIO
 from PIL import Image
 
-from keras.preprocessing import image
-
 
 def read_image_file(file) -> Image.Image:
     """Reads an image file from binary data and returns it as a PIL Image.

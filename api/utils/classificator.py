@@ -2,45 +2,42 @@
 import numpy as np
 import torch
 
-from keras.models import load_model
 from torchvision import transforms
 
 # Own libraries
-from python.metadata.path import Path
-from python.models.utils.torch_cnn import TorchCNN
+from config import get_tf_model, get_pyt_model
 
 
 def predict(img) -> dict:
+
+    classes = {0: 'Other', 1: 'Portrait'}
+
     im = img.copy().convert("L")
     img = img.resize((32, 32))
     img_array = np.array(img, dtype='float32')
     img_array = np.expand_dims(img_array, axis=0)
     img_array /= 255.0
 
-    model = load_model(Path.classic_model_tf)
-    model.load_weights(Path.best_weights_tf)
+    tf_model = get_tf_model()
+    prediction = tf_model.predict(img_array)[0][0]
+    # predicted_tf = np.argmax(int(prediction), axis=-1)
+    predicted_tf = 0 if prediction < 0.5 else 1
 
-    prediction = model.predict(img_array)[0][0]
-
-    if prediction >= 0.5:
-        classes = 'Is a portrait'
-    else:
-        classes = 'Is a other'
-
-    model_ = TorchCNN()
-    model_.load_state_dict(torch.load(Path.classic_model_torch))
+    pyt_model = get_pyt_model()
 
     preprocess = transforms.Compose(
         [transforms.Resize((32, 32)), transforms.ToTensor()]
     )
-
     im = preprocess(im)
     im = torch.unsqueeze(im, 0)
 
     with torch.no_grad():
-        predictions = model_(im)[0][0]
+        predictions = pyt_model(im)
+        # predicted_pyt = torch.argmax(predictions, dim=1).item()
+
+    predicted_pyt = 0 if predictions < 0.5 else 1
 
     return {
-        'Tensorflow model predict': classes,
-        'PyTorch model predict': str(predictions)}
-
+        'Tensorflow model predict': f'The image is a {classes[predicted_tf]}',
+        'PyTorch model predict': f'The image is a {classes[predicted_pyt]}',
+    }
