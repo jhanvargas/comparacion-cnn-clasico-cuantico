@@ -5,12 +5,13 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 from qiskit import Aer
-from qiskit.circuit.library import RealAmplitudes, ZZFeatureMap
+from qiskit.circuit.library import RealAmplitudes, ZZFeatureMap, TwoLocal
 from qiskit.opflow import AerPauliExpectation
 from qiskit.utils import QuantumInstance
 from qiskit.visualization import circuit_drawer
 from qiskit_machine_learning.connectors import TorchConnector
 from qiskit_machine_learning.neural_networks import TwoLayerQNN
+from qiskit import transpile
 
 # Own libraries
 from python.ibm_quantum.utils.connect import get_ibm_quantum
@@ -162,13 +163,17 @@ def create_qnn(backend: bool = False) -> TwoLayerQNN:
     feature_map = ZZFeatureMap(2)
     ansatz = RealAmplitudes(2, reps=1, entanglement='linear')
 
-    print(ansatz.parameters)
+    print(feature_map)
+    print(ansatz)
 
     # param_dict = {param: np.pi / 4 for param in ansatz.parameters}
     # ansatz.assign_parameters(param_dict)
 
     qnn = TwoLayerQNN(
-        2, feature_map, ansatz,
+        2, 
+        feature_map, 
+        ansatz,
+        input_gradients=True,
         exp_val=AerPauliExpectation(),
         quantum_instance=backend,
     )

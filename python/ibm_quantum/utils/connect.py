@@ -67,8 +67,8 @@ def get_ibm_quantum() -> Union[IBMQBackend, None]:
         IBMQ.save_account(config['ibm'], overwrite=True)
         IBMQ.load_account()
 
-        provider = IBMQ.get_provider(hub='ibm-q')
-        # backend = provider.backends()
+        # Conexión al backend
+        provider = IBMQ.get_provider(hub='ibm-q', group='open', project='main')
         backend = provider.get_backend(config['name'])
 
         return backend
