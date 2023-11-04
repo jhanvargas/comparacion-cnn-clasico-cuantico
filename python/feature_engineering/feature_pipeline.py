@@ -2,8 +2,8 @@
 import pandas as pd
 
 # Own libraries
-from python.feature_engineering.utils.data_clean import show_random_image
 from python.feature_engineering.utils.data_clean import split_data
+from python.feature_engineering.utils.exploratory import show_random_image
 from python.feature_engineering.utils.download import download_dataset
 from python.metadata.path import Path
 from python.utils.readers import read_yaml
@@ -23,12 +23,12 @@ def executor() -> None:
     split = config['split_data']
     show_im = config['show_random_image']
 
-    if show_im:
-        show_random_image(Path.portrait)
-
     if download:
         dataset = config['dataset_name']
         download_dataset(dataset_name=dataset, output_path=Path.output)
+
+    if show_im:
+        show_random_image(Path.portrait)
 
     if split:
         train_binary = pd.read_csv(Path.train_binary)

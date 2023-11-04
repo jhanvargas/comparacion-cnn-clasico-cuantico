@@ -1,9 +1,7 @@
 # External libraries
-import matplotlib.pyplot as plt
 import numpy as np
 import os
 import pandas as pd
-import random
 
 from sklearn.model_selection import train_test_split
 from skimage import io
@@ -101,23 +99,3 @@ def split_data(
         test_data = test_df
 
     return train_data, validation_data, test_data
-
-
-def show_random_image(path: str) -> None:
-    """Muestra una imagen aleatoria de una carpeta especificada.
-
-    Args:
-        path: La ruta de la carpeta que contiene las imágenes.
-
-    """
-    files = os.listdir(path)
-
-    random_image = random.choice(files)
-
-    im = io.imread(os.path.join(path, random_image))
-    print(im.shape)
-
-    plt.imshow(im)
-    plt.title(f'Imagen aleatoria: {random_image}')
-    plt.axis('off')
-    plt.show()

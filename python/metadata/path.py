@@ -40,8 +40,20 @@ class Path:
     images = os.path.join('output', 'binary')
     """Ruta a carpeta con imágenes del proyecto."""
 
+    images_grid_portrait = os.path.join('output', 'grid_portrait.png')
+    """Imagen con grid de imágenes de retratos."""
+
+    images_grid_other = os.path.join('output', 'grid_other.png')
+    """Imagen con grid de imágenes de otros."""
+
     kaggle_config = os.path.join('input', 'kaggle.json')
     """Archivo de configuración de kaggle."""
+
+    label_distribution = os.path.join('output', 'label_distribution.png')
+    """Imagen con distribución de etiquetas."""
+
+    other = os.path.join('output', 'binary', 'other')
+    """Ruta a imágenes de otros."""
 
     output = os.path.join('output')
     """Ruta a carpeta de salida."""
