@@ -5,11 +5,12 @@ import numpy as np
 import os
 import pandas as pd
 import random
+import seaborn as sns
 
 from PIL import Image
 from skimage import io
-import seaborn as sns
-import seaborn as sns
+from sklearn.decomposition import PCA
+from sklearn.preprocessing import StandardScaler
 
 
 def show_random_image(path: str) -> None:
@@ -34,7 +35,6 @@ def show_random_image(path: str) -> None:
 
 def plot_images_from_path(
     path: str,
-    title: str,
     num_images: int = 10,
     cols: int = 5,
     rows: int = 2,
@@ -44,7 +44,6 @@ def plot_images_from_path(
 
     Args:
         path: Ruta del directorio que contiene las imágenes.
-        title: Título de la grilla.
         num_images: Número de imágenes a mostrar. Por defecto 10.
         cols: Número de columnas de la grilla. Por defecto 5.
         rows: Número de filas de la grilla. Por defecto 2.
@@ -59,13 +58,14 @@ def plot_images_from_path(
 
     image_files = [os.path.join(path, file) for file in os.listdir(path)]
 
-    image_files = image_files[:num_images]
+    #image_files = image_files[:num_images]
+    image_files = np.random.choice(image_files, num_images, replace=False)
 
     fig, axes = plt.subplots(
         nrows=rows, ncols=cols, figsize=(cols * 3, rows * 3)
     )
 
-    fig.suptitle(title, fontsize=16)
+    #fig.suptitle(title, fontsize=16)
 
     axes = axes.flatten()
 
@@ -104,7 +104,7 @@ def plot_label_distribution(
 
     colors = sns.color_palette('pastel')[0 : len(label_counts)]
 
-    fig, ax = plt.subplots(figsize=(6, 6))
+    fig, ax = plt.subplots(figsize=(8, 8))
     wedges, texts, autotexts = ax.pie(
         label_counts,
         labels=None,
@@ -114,7 +114,7 @@ def plot_label_distribution(
     )
 
     legend_labels = [
-        f'{name}: {count}'
+        f'{name}: {count:,}'
         for name, count in zip(label_counts.index, label_counts)
     ]
     ax.legend(
@@ -125,8 +125,8 @@ def plot_label_distribution(
         bbox_to_anchor=(1, 0, 0.5, 1),
     )
 
-    plt.title('Distribución de Etiquetas')
-    plt.setp(autotexts, size=10, weight="bold")
+    plt.title('Distribución de Etiquetas', fontsize=14)
+    plt.setp(autotexts, size=14, weight="bold")
 
     if save_path:
         plt.savefig(save_path, bbox_inches='tight')
@@ -165,36 +165,89 @@ def analyze_image_statistics_(image_paths: list) -> None:
         print(f"Media: {mean_val:.2f}, Desviación estándar: {std_val:.2f}\n")
 
 
-def analyze_image_statistics(image_path):
-    # Cargar la imagen
-    image = cv2.imread(image_path)
-    image_rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)  # Convertir de BGR a RGB
-    gray_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)  # Convertir a escala de grises
+def analyze_image_statistics(image_path: str) -> None:
+    """Analiza las estadísticas de brillo de una imagen en escala de grises y muestra 
+     su histograma.
 
-    # Crear un subplot con 1 fila y 2 columnas
+    Args:
+        image_path: Ruta de la imagen a analizar.
+
+    """
+    image = cv2.imread(image_path)
+    gray_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)  
+
     fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(10, 5))
 
-    # Mostrar la imagen en escala de grises
     ax1.imshow(gray_image, cmap='gray')
     ax1.set_title('Imagen en Escala de Grises')
-    ax1.axis('off')  # Desactivar los ejes
+    ax1.axis('off') 
 
-    # Calcular el histograma para la imagen en escala de grises
     histogram = cv2.calcHist([gray_image], [0], None, [256], [0, 256])
     
-    # Dibujar el histograma
     ax2.plot(histogram, color='black')
     ax2.set_xlim([0, 256])
     ax2.set_title('Histograma de Intensidad de Grises')
     ax2.set_xlabel('Intensidad del Pixel')
     ax2.set_ylabel('Cantidad de Pixels')
 
-    # Mostrar el gráfico
-    plt.tight_layout()  # Ajusta automáticamente los subplots para que encajen en la figura
+    plt.tight_layout()
     plt.show()
 
-    # Calcular estadísticas de brillo
     mean_val = np.mean(gray_image)
     std_val = np.std(gray_image)
     print(f"Estadísticas de brillo para {image_path}:")
     print(f"Media: {mean_val:.2f}, Desviación estándar: {std_val:.2f}\n")
+
+
+def check_image_quality(file_paths: list) -> None:
+    """Verifica la calidad de las imágenes en una lista de rutas de archivo.
+
+    Args:
+        file_paths : Una lista de rutas de archivo.
+
+    Returns:
+        Una lista de problemas encontrados en las imágenes. Si no se encontraron 
+         problemas, la lista estará vacía.
+
+    """
+    problems = []
+
+    for path in file_paths:
+
+        if not os.path.isfile(path):
+            problems.append(f"Archivo no encontrado: {path}")
+            continue
+
+        try:
+
+            with Image.open(path) as img:
+
+                if img.size != (128, 128):
+                    problems.append(f"Dimensiones inesperadas en {path}: {img.size}")
+
+                pixel_values = np.array(img)
+                if pixel_values.min() < 0 or pixel_values.max() > 255:
+                    problems.append(f"Valores de píxeles fuera de rango en {path}")
+        
+        except (IOError, SyntaxError) as e:
+            problems.append(f"No se pudo leer la imagen {path}: {e}")
+
+    return problems
+
+
+def images_to_pixel_vectors(file_paths: list) -> np.array:
+    """Convierte una lista de imágenes en una matriz de vectores de píxeles.
+
+    Args:
+        file_paths (list): Una lista de rutas de archivo que contienen imágenes.
+
+    Returns:
+        numpy.ndarray: Una matriz de vectores de píxeles de las imágenes.
+
+    """
+    pixel_vectors = []
+    for path in file_paths:
+        with Image.open(path) as img:
+            pixel_vector = np.array(img).flatten()
+            pixel_vectors.append(pixel_vector)
+    return np.array(pixel_vectors)
