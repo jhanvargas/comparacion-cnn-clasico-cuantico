@@ -10,6 +10,7 @@ import seaborn as sns
 from PIL import Image
 from skimage import io
 from sklearn.decomposition import PCA
+from sklearn.manifold import TSNE
 from sklearn.preprocessing import StandardScaler
 
 
@@ -58,14 +59,14 @@ def plot_images_from_path(
 
     image_files = [os.path.join(path, file) for file in os.listdir(path)]
 
-    #image_files = image_files[:num_images]
+    # image_files = image_files[:num_images]
     image_files = np.random.choice(image_files, num_images, replace=False)
 
     fig, axes = plt.subplots(
         nrows=rows, ncols=cols, figsize=(cols * 3, rows * 3)
     )
 
-    #fig.suptitle(title, fontsize=16)
+    # fig.suptitle(title, fontsize=16)
 
     axes = axes.flatten()
 
@@ -123,6 +124,7 @@ def plot_label_distribution(
         title="Etiquetas",
         loc="center left",
         bbox_to_anchor=(1, 0, 0.5, 1),
+        fontsize=14,
     )
 
     plt.title('Distribución de Etiquetas', fontsize=14)
@@ -135,7 +137,7 @@ def plot_label_distribution(
 
 
 def analyze_image_statistics_(image_paths: list) -> None:
-    """Calcula el histograma de color y las estadísticas de brillo para una 
+    """Calcula el histograma de color y las estadísticas de brillo para una
      lista de imágenes.
 
     Args:
@@ -165,36 +167,50 @@ def analyze_image_statistics_(image_paths: list) -> None:
         print(f"Media: {mean_val:.2f}, Desviación estándar: {std_val:.2f}\n")
 
 
-def analyze_image_statistics(image_path: str) -> None:
-    """Analiza las estadísticas de brillo de una imagen en escala de grises y muestra 
+def analyze_image_statistics(image_path: str, save_path: str = None) -> None:
+    """Analiza las estadísticas de brillo de una imagen en escala de grises y muestra
      su histograma.
 
     Args:
         image_path: Ruta de la imagen a analizar.
+        save_path: Ruta para guardar la gráfica. Por defecto None.
 
     """
     image = cv2.imread(image_path)
-    gray_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)  
+    gray_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
     fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(10, 5))
 
     ax1.imshow(gray_image, cmap='gray')
     ax1.set_title('Imagen en Escala de Grises')
-    ax1.axis('off') 
+    ax1.axis('off')
 
     histogram = cv2.calcHist([gray_image], [0], None, [256], [0, 256])
-    
+
     ax2.plot(histogram, color='black')
     ax2.set_xlim([0, 256])
     ax2.set_title('Histograma de Intensidad de Grises')
     ax2.set_xlabel('Intensidad del Pixel')
     ax2.set_ylabel('Cantidad de Pixels')
 
-    plt.tight_layout()
-    plt.show()
-
     mean_val = np.mean(gray_image)
     std_val = np.std(gray_image)
+    ax2.text(
+        0.1,
+        0.9,
+        f"Media: {mean_val:.2f}\nDesviación estándar: {std_val:.2f}",
+        transform=ax2.transAxes,
+        fontsize=10,
+        verticalalignment='top',
+    )
+
+    plt.tight_layout()
+
+    if save_path:
+        plt.savefig(save_path, bbox_inches='tight')
+
+    plt.show()
+
     print(f"Estadísticas de brillo para {image_path}:")
     print(f"Media: {mean_val:.2f}, Desviación estándar: {std_val:.2f}\n")
 
@@ -206,29 +222,30 @@ def check_image_quality(file_paths: list) -> None:
         file_paths : Una lista de rutas de archivo.
 
     Returns:
-        Una lista de problemas encontrados en las imágenes. Si no se encontraron 
+        Una lista de problemas encontrados en las imágenes. Si no se encontraron
          problemas, la lista estará vacía.
 
     """
     problems = []
 
     for path in file_paths:
-
         if not os.path.isfile(path):
             problems.append(f"Archivo no encontrado: {path}")
             continue
 
         try:
-
             with Image.open(path) as img:
-
                 if img.size != (128, 128):
-                    problems.append(f"Dimensiones inesperadas en {path}: {img.size}")
+                    problems.append(
+                        f"Dimensiones inesperadas en {path}: {img.size}"
+                    )
 
                 pixel_values = np.array(img)
                 if pixel_values.min() < 0 or pixel_values.max() > 255:
-                    problems.append(f"Valores de píxeles fuera de rango en {path}")
-        
+                    problems.append(
+                        f"Valores de píxeles fuera de rango en {path}"
+                    )
+
         except (IOError, SyntaxError) as e:
             problems.append(f"No se pudo leer la imagen {path}: {e}")
 
@@ -251,3 +268,88 @@ def images_to_pixel_vectors(file_paths: list) -> np.array:
             pixel_vector = np.array(img).flatten()
             pixel_vectors.append(pixel_vector)
     return np.array(pixel_vectors)
+
+
+def apply_pca(data: pd.DataFrame, save_path: str = None) -> None:
+    """Realiza PCA en un conjunto de datos y genera un subplot con el scree
+    plot y la visualización de las dos primeras componentes principales.
+
+    Args:
+        data: Un DataFrame que contiene una columnas de pixeles.
+        vectores de píxeles aplanados y una columna con etiquetas
+        binarias.
+        save_path: Ruta para guardar la gráfica. Por defecto None.
+
+    """
+    pixel_vectors = data.drop('label', axis=1)
+    labels = data['label'].values
+
+    scaler = StandardScaler()
+    pixel_vectors_scaled = scaler.fit_transform(pixel_vectors)
+
+    pca = PCA(n_components=2)
+    principal_components = pca.fit_transform(pixel_vectors_scaled)
+
+    fig, ax = plt.subplots(figsize=(10, 6))
+
+    scatter = ax.scatter(
+        principal_components[:, 0],
+        principal_components[:, 1],
+        c=labels,
+        alpha=0.5,
+    )
+
+    legend1 = ax.legend(*scatter.legend_elements(), title="Clases")
+    ax.add_artist(legend1)
+    ax.set_xlabel('Componente principal 1')
+    ax.set_ylabel('Componente principal 2')
+    ax.set_title('PCA - Primeras dos componentes principales')
+    ax.grid(True)
+
+    if save_path:
+        plt.savefig(save_path, bbox_inches='tight')
+
+    plt.show()
+
+
+def apply_tsne(data: pd.DataFrame, save_path: str = None) -> None:
+    """Realiza PCA en un conjunto de datos y genera un subplot con el scree
+    plot y la visualización de las dos primeras componentes principales.
+
+    Args:
+        data: Un DataFrame que contiene una columnas de pixeles.
+        vectores de píxeles aplanados y una columna con etiquetas
+        binarias.
+        save_path: Ruta para guardar la gráfica. Por defecto None.
+
+    """
+    pixel_vectors = data.drop('label', axis=1)
+    labels = data['label'].values
+
+    scaler = StandardScaler()
+    pixel_vectors_scaled = scaler.fit_transform(pixel_vectors)
+
+    tsne = TSNE(n_components=2, random_state=0)
+    tsne_results = tsne.fit_transform(pixel_vectors_scaled)
+
+    fig, ax = plt.subplots(figsize=(10, 6))
+
+    scatter = ax.scatter(
+        tsne_results[:, 0],
+        tsne_results[:, 1],
+        c=labels,
+        alpha=0.5,
+        cmap='viridis',
+    )
+
+    legend1 = ax.legend(*scatter.legend_elements(), title="Clases")
+    ax.add_artist(legend1)
+    ax.set_xlabel('t-SNE característica 1')
+    ax.set_ylabel('t-SNE característica 2')
+    ax.set_title('Visualización con t-SNE')
+    ax.grid(True)
+
+    if save_path:
+        plt.savefig(save_path, bbox_inches='tight')
+
+    plt.show()

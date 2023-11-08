@@ -40,11 +40,14 @@ class Path:
     images = os.path.join('output', 'binary')
     """Ruta a carpeta con imágenes del proyecto."""
 
+    images_grid_other = os.path.join('output', 'grid_other.png')
+    """Imagen con grid de imágenes de otros."""
+
     images_grid_portrait = os.path.join('output', 'grid_portrait.png')
     """Imagen con grid de imágenes de retratos."""
 
-    images_grid_other = os.path.join('output', 'grid_other.png')
-    """Imagen con grid de imágenes de otros."""
+    intensities = os.path.join('output', 'intensities.png')
+    """Imagen con intensidades de imágenes de retratos."""
 
     kaggle_config = os.path.join('input', 'kaggle.json')
     """Archivo de configuración de kaggle."""
@@ -57,6 +60,12 @@ class Path:
 
     output = os.path.join('output')
     """Ruta a carpeta de salida."""
+
+    pca = os.path.join('output', 'pca.png')
+    """Imagen con PCA de imágenes de retratos."""
+
+    pixel_df = os.path.join('output', 'pixel_df.parquet')
+    """Archivo con df de imágenes en arreglo."""
 
     portrait = os.path.join('output', 'binary', 'portrait')
     """Ruta a imágenes de retratos."""
