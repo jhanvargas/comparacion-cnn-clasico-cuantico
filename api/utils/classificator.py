@@ -9,7 +9,16 @@ from config import get_tf_model, get_pyt_model
 
 
 def predict(img) -> dict:
+    """Realiza la predicción de una imagen utilizando dos modelos de 
+     clasificación: uno basado en TensorFlow y otro en PyTorch.
 
+    Args:
+        img: Imagen a clasificar.
+
+    Returns:
+        Un diccionario con las predicciones de ambos modelos.
+
+    """
     classes = {0: 'Other', 1: 'Portrait'}
 
     im = img.copy().convert("L")

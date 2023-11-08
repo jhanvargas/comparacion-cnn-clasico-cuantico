@@ -4,13 +4,14 @@ from PIL import Image
 
 
 def read_image_file(file) -> Image.Image:
-    """Reads an image file from binary data and returns it as a PIL Image.
+    """Lee un archivo de imagen desde datos binarios y lo devuelve como una 
+     imagen PIL.
 
     Args:
-        file: Binary image data.
+        file: Datos binarios de la imagen.
 
     Returns:
-        Image.Image: A PIL Image object.
+        Image.Image: Un objeto de imagen PIL.
 
     """
     image_stream = BytesIO(file)
