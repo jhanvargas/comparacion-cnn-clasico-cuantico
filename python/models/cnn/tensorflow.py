@@ -4,6 +4,7 @@ import mlflow.tensorflow
 import pandas as pd
 import tensorflow as tf
 
+from keras.callbacks import EarlyStopping
 from keras.callbacks import ModelCheckpoint
 from keras.models import load_model
 
@@ -24,11 +25,9 @@ def tensorflow_model() -> None:
     Crea y entrena un modelo de CNN clásica utilizando TensorFlow. 
     Si se especifica, también evalúa el modelo en un conjunto de prueba.
 
-    Returns:
-        None
-
     """
     with mlflow.start_run():
+
         if tf.config.experimental.list_physical_devices('GPU'):
             print('TensorFlow está utilizando la GPU.')
         else:
@@ -38,6 +37,7 @@ def tensorflow_model() -> None:
         train = config['train']
         test = config['test']
 
+        l2_regularizer = config['l2_regularizer']
         batch = config['batch_size']
         target = tuple(config['input_target'])
         epochs = config['epochs']
@@ -62,12 +62,22 @@ def tensorflow_model() -> None:
                 save_best_only=True,
             )
 
+            early_stopping = EarlyStopping(
+                monitor='val_accuracy',
+                mode='max',
+                patience=10,
+                min_delta=0.01,
+                verbose=1
+            )
+
             model = create_tf_cnn(
                 input_shape=(32, 32, 3),
                 optimizer=optimizer,
                 loss=loss,
                 metrics=metrics,
+                l2_regularizer=l2_regularizer,
             )
+            
             print(model.summary())
 
             hist = model.fit(
@@ -76,14 +86,13 @@ def tensorflow_model() -> None:
                 validation_data=val_generator,
                 validation_steps=val_generator.samples // batch,
                 epochs=epochs,
-                callbacks=[checkpoint],
+                callbacks=[checkpoint, early_stopping],
             )
 
             model.save(Path.classic_model_tf)
 
             plot_generate(hist, Path.cnn_tf_plot)
 
-            # Log metrics and artifacts with MLflow
             mlflow.log_metric("train_loss", hist.history['loss'][-1])
             mlflow.log_metric("train_accuracy", hist.history['accuracy'][-1])
             mlflow.log_metric("val_loss", hist.history['val_loss'][-1])

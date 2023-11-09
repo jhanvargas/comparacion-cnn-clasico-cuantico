@@ -14,84 +14,83 @@ from keras.layers import (
 )
 from keras.models import Sequential
 from keras.preprocessing.image import DataFrameIterator, ImageDataGenerator
+from keras.regularizers import l2
 
 
 def create_tf_cnn(
-    input_shape: tuple, optimizer: str, loss: str, metrics: list
+    input_shape: tuple,
+    optimizer: str,
+    loss: str,
+    metrics: list,
+    l2_regularizer: float = None,
 ) -> Sequential:
     """Crea y compila un modelo de red neuronal convolucional (CNN) con
         tensorflow.
 
-    Args:
+    rgs:
         input_shape: Tamaño de la entrada (altura, ancho, canales).
-        optimizer:
-        loss:
-        metrics:
+        optimizer: Nombre del optimizador a utilizar.
+        loss: Nombre de la función de pérdida a utilizar.
+        metrics: Lista de métricas a utilizar para evaluar el modelo.
+        l2_regularizer: Valor de regularización L2 a utilizar en las capas
+            convolucionales y completamente conectadas.
 
     Returns:
         Sequential: Modelo de CNN creado y compilado.
 
+    Raises:
+        ValueError: Si el valor de `input_shape` no es una tupla de tres
+            enteros positivos.
+
     """
+    l2_regularizer = l2(l2_regularizer) if l2_regularizer else None
+
     model = Sequential()
 
-    model.add(Conv2D(64, (3, 3), input_shape=input_shape, padding='same'))
+    model.add(
+        Conv2D(
+            64,
+            (3, 3),
+            input_shape=input_shape,
+            padding='same',
+            kernel_regularizer=l2_regularizer,
+        )
+    )
     model.add(BatchNormalization())
     model.add(Activation('relu'))
-    model.add(Dropout(0.2))
+    model.add(Dropout(0.5))
 
-    model.add(Conv2D(64, (3, 3), padding='same'))
-    model.add(BatchNormalization())
-    model.add(Activation('relu'))
-    model.add(MaxPooling2D(pool_size=(2, 2)))
-
-    model.add(Conv2D(128, (3, 3), padding='same'))
-    model.add(BatchNormalization())
-    model.add(Activation('relu'))
-    model.add(Dropout(0.2))
-
-    model.add(Conv2D(128, (3, 3), padding='same'))
-    model.add(BatchNormalization())
-    model.add(Activation('relu'))
-    model.add(MaxPooling2D(pool_size=(2, 2)))
-
-    model.add(Conv2D(256, (3, 3), padding='same'))
-    model.add(BatchNormalization())
-    model.add(Activation('relu'))
-    model.add(Dropout(0.2))
-
-    model.add(Conv2D(256, (3, 3), padding='same'))
-    model.add(BatchNormalization())
-    model.add(Activation('relu'))
-
-    model.add(Conv2D(256, (3, 3), padding='same'))
+    model.add(
+        Conv2D(128, (3, 3), padding='same', kernel_regularizer=l2_regularizer)
+    )
     model.add(BatchNormalization())
     model.add(Activation('relu'))
     model.add(MaxPooling2D(pool_size=(2, 2)))
 
-    model.add(Conv2D(512, (3, 3), padding='same'))
+    model.add(
+        Conv2D(256, (3, 3), padding='same', kernel_regularizer=l2_regularizer)
+    )
     model.add(BatchNormalization())
     model.add(Activation('relu'))
-    model.add(Dropout(0.2))
+    model.add(Dropout(0.5))
 
-    model.add(Conv2D(512, (3, 3), padding='same'))
-    model.add(BatchNormalization())
-    model.add(Activation('relu'))
-
-    model.add(Conv2D(512, (3, 3), padding='same'))
+    model.add(
+        Conv2D(512, (3, 3), padding='same', kernel_regularizer=l2_regularizer)
+    )
     model.add(BatchNormalization())
     model.add(Activation('relu'))
     model.add(MaxPooling2D(pool_size=(2, 2)))
 
     model.add(Flatten())
-    model.add(Dense(4096))
+    model.add(Dense(2048, kernel_regularizer=l2_regularizer))
     model.add(BatchNormalization())
     model.add(Activation('relu'))
-    model.add(Dropout(0.2))
+    model.add(Dropout(0.5))
 
-    model.add(Dense(4096))
+    model.add(Dense(128, kernel_regularizer=l2_regularizer))
     model.add(BatchNormalization())
     model.add(Activation('relu'))
-    model.add(Dropout(0.3))
+    model.add(Dropout(0.5))
 
     model.add(Dense(1, activation='sigmoid'))
 
