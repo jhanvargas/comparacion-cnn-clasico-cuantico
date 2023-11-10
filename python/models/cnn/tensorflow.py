@@ -66,7 +66,7 @@ def tensorflow_model() -> None:
                 monitor='val_accuracy',
                 mode='max',
                 patience=10,
-                min_delta=0.01,
+                min_delta=0.001,
                 verbose=1
             )
 
@@ -77,7 +77,7 @@ def tensorflow_model() -> None:
                 metrics=metrics,
                 l2_regularizer=l2_regularizer,
             )
-            
+
             print(model.summary())
 
             hist = model.fit(

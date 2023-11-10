@@ -114,38 +114,16 @@ class TorchCNN(nn.Module):
         super().__init__()
         self.conv0 = nn.Conv2d(
             in_channels=1,
-            out_channels=16,
-            kernel_size=(3, 3),
-            stride=(1, 1),
-            padding=(1, 1),
-            bias=False,
-        )
-        self.bn0 = nn.BatchNorm2d(num_features=16)
-        self.max_pool = nn.MaxPool2d(kernel_size=(2, 2), stride=(2, 2))
-
-        self.conv1 = nn.Conv2d(
-            in_channels=16,
-            out_channels=32,
-            kernel_size=(3, 3),
-            stride=(1, 1),
-            padding=(1, 1),
-            bias=False,
-        )
-        self.bn1 = nn.BatchNorm2d(num_features=32)
-        # self.max_pool
-
-        self.conv2 = nn.Conv2d(
-            in_channels=32,
             out_channels=64,
             kernel_size=(3, 3),
             stride=(1, 1),
             padding=(1, 1),
             bias=False,
         )
-        self.bn2 = nn.BatchNorm2d(num_features=64)
-        # self.max_pool
+        self.bn0 = nn.BatchNorm2d(num_features=64)
+        self.max_pool = nn.MaxPool2d(kernel_size=(2, 2), stride=(2, 2))
 
-        self.conv3 = nn.Conv2d(
+        self.conv1 = nn.Conv2d(
             in_channels=64,
             out_channels=128,
             kernel_size=(3, 3),
@@ -153,13 +131,35 @@ class TorchCNN(nn.Module):
             padding=(1, 1),
             bias=False,
         )
-        self.bn3 = nn.BatchNorm2d(num_features=128)
+        self.bn1 = nn.BatchNorm2d(num_features=128)
+        # self.max_pool
+
+        self.conv2 = nn.Conv2d(
+            in_channels=128,
+            out_channels=256,
+            kernel_size=(3, 3),
+            stride=(1, 1),
+            padding=(1, 1),
+            bias=False,
+        )
+        self.bn2 = nn.BatchNorm2d(num_features=256)
+        # self.max_pool
+
+        self.conv3 = nn.Conv2d(
+            in_channels=256,
+            out_channels=512,
+            kernel_size=(3, 3),
+            stride=(1, 1),
+            padding=(1, 1),
+            bias=False,
+        )
+        self.bn3 = nn.BatchNorm2d(num_features=512)
         # self.max_pool
 
         self.dropout = nn.Dropout(p=0.5)
-        self.fc0 = nn.Linear(in_features=128 * 2 * 2, out_features=64)
-        self.fc1 = nn.Linear(in_features=64, out_features=32)
-        self.fc2 = nn.Linear(in_features=32, out_features=1)
+        self.fc0 = nn.Linear(in_features=512 * 8 * 8, out_features=2048)
+        self.fc1 = nn.Linear(in_features=2048, out_features=128)
+        self.fc2 = nn.Linear(in_features=128, out_features=1)
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         """Define el flujo hacia adelante de la red.
@@ -172,13 +172,15 @@ class TorchCNN(nn.Module):
 
         """
         x = F.relu(self.bn0(self.conv0(x)))
-        x = self.max_pool(x)
+        #x = self.max_pool(x)
+        x = self.dropout(x)
 
         x = F.relu(self.bn1(self.conv1(x)))
         x = self.max_pool(x)
 
         x = F.relu(self.bn2(self.conv2(x)))
-        x = self.max_pool(x)
+        #x = self.max_pool(x)
+        x = self.dropout(x)
 
         x = F.relu(self.bn3(self.conv3(x)))
         x = self.max_pool(x)

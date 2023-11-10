@@ -117,11 +117,11 @@ def image_generator(data: str) -> ImageDataGenerator:
     if data == 'train':
         datagen = ImageDataGenerator(
             rescale=1.0 / 255.0,  # Reescala los valores de píxeles a [0, 1]
-            rotation_range=20,  # Rotación aleatoria de la imagen
-            width_shift_range=0.2,  # Cambio aleatorio en el ancho
-            height_shift_range=0.2,  # Cambio aleatorio en la altura
-            horizontal_flip=True,  # Volteo horizontal aleatorio
-            fill_mode='nearest',  # Modo de relleno para aumentar el tamaño
+            # rotation_range=20,  # Rotación aleatoria de la imagen
+            # width_shift_range=0.2,  # Cambio aleatorio en el ancho
+            # height_shift_range=0.2,  # Cambio aleatorio en la altura
+            # horizontal_flip=True,  # Volteo horizontal aleatorio
+            # fill_mode='nearest',  # Modo de relleno para aumentar el tamaño
         )
     elif data == 'test':
         datagen = ImageDataGenerator(rescale=1.0 / 255.0)
