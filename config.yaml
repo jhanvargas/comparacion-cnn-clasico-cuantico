@@ -8,6 +8,7 @@ cnn_models:
     tf_cnn_classic:
         train: False
         test: False
+        l2_regularizer: null
         batch_size: 32
         input_target: [32, 32]
         epochs: 100
@@ -31,3 +32,4 @@ cnn_models:
         epochs: 10
         learning_rate: 0.001
         backend: False
+        structure: qiskit

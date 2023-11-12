@@ -6,7 +6,7 @@ from torchinfo import summary
 # Own libraries
 from python.metadata.path import Path
 from python.models.utils.hybrid_cnn import (
-    HybridCNN, create_qnn, save_q_circuit
+    HybridCNN, HybridCNNPenny, create_qnn, save_q_circuit
 )
 from python.models.utils.torch_cnn import (
     LoadDataset,
@@ -33,6 +33,7 @@ def hybrid_model():
     epochs = config['epochs']
     learning_rate = config['learning_rate']
     backend = config['backend']
+    structure = config['structure']
 
     loss_function = torch.nn.BCELoss()
 
@@ -46,13 +47,16 @@ def hybrid_model():
         train_loader = DataLoader(train_dataset, batch_size, shuffle=True)
         val_loader = DataLoader(val_dataset, batch_size)
 
-        qnn = create_qnn(backend)
-        print(qnn.operator)
-        model = HybridCNN(qnn).to(device)
+        if structure == 'qiskit':
+            qnn = create_qnn(backend)
+            print(qnn.operator)
+            model = HybridCNN(qnn).to(device)
 
-        save_q_circuit(qnn, Path.q_circuit)
+            save_q_circuit(qnn, Path.q_circuit)
 
-        summary(model, input_size=target)
+            summary(model, input_size=target)
+        else:
+            model = HybridCNNPenny().to(device)
 
         optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
 
@@ -73,8 +77,12 @@ def hybrid_model():
         test_dataset = LoadDataset(csv_file=Path.test, transform=test_transform)
         test_loader = DataLoader(test_dataset, batch_size=batch_size)
 
-        qnn = create_qnn()
-        model = HybridCNN(qnn).to(device)
+        if structure == 'qiskit':
+            qnn = create_qnn()
+            model = HybridCNN(qnn).to(device)
+        else:
+            model = HybridCNNPenny().to(device)
+
         model.load_state_dict(torch.load(Path.hybrid_model_torch))
 
         test_loss, test_acc = predict_data(model, test_loader, loss_function)
