@@ -25,6 +25,9 @@ class Path:
     config = os.path.join('config.yaml')
     """Archivo de configuración de pipelines."""
 
+    confusion_matrix_tf = os.path.join('output', 'confusion_matrix_tf.png')
+    """Imagen con matriz de confusión de CNN clásica con Tensorflow."""
+
     data = os.path.join('..', '..', 'data')
     """Ruta de data desde modulo de ejemplos."""
 

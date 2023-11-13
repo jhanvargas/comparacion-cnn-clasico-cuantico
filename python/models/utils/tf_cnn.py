@@ -1,6 +1,8 @@
 # External libraries
 import matplotlib.pyplot as plt
+import numpy as np
 import pandas as pd
+import seaborn as sns
 
 from keras.callbacks import History
 from keras.layers import (
@@ -15,6 +17,7 @@ from keras.layers import (
 from keras.models import Sequential
 from keras.preprocessing.image import DataFrameIterator, ImageDataGenerator
 from keras.regularizers import l2
+from sklearn.metrics import confusion_matrix
 
 
 def create_tf_cnn(
@@ -198,6 +201,32 @@ def plot_generate(hist: History, path_save: str = None) -> None:
     plt.legend()
 
     plt.tight_layout()
+
+    if path_save:
+        plt.savefig(path_save)
+
+    plt.show()
+
+
+def plot_confusion_matrix(
+    true_classes: np.array, predicted_classes: np.array, path_save: str = None
+) -> None:
+    """Grafica la matriz de confusión para las clases verdaderas y las clases predichas.
+
+    Args:
+        true_classes (array-like): Clases verdaderas.
+        predicted_classes (array-like): Clases predichas.
+        path_save:
+
+    """
+    conf_matrix = confusion_matrix(true_classes, predicted_classes)
+
+    plt.figure(figsize=(10, 8))
+    sns.set(font_scale=1.5)
+    sns.heatmap(conf_matrix, annot=True, fmt='d', cmap='Blues')
+    plt.title('Matriz de Confusión')
+    plt.xlabel('Etiquetas Predichas', fontsize=14)
+    plt.ylabel('Etiquetas Verdaderas', fontsize=14)
 
     if path_save:
         plt.savefig(path_save)

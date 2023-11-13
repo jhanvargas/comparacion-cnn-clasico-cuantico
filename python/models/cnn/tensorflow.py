@@ -1,6 +1,7 @@
 # External libraries
 import mlflow
 import mlflow.tensorflow
+import numpy as np
 import pandas as pd
 import tensorflow as tf
 
@@ -15,6 +16,7 @@ from python.models.utils.tf_cnn import (
     flow_generator,
     image_generator,
     plot_generate,
+    plot_confusion_matrix,
 )
 from python.utils.readers import read_yaml
 
@@ -101,12 +103,34 @@ def tensorflow_model() -> None:
 
         if test:
             test = pd.read_csv(Path.test, converters={'label': str})
+
             test_datagen = image_generator('test')
             test_generator = flow_generator(test, test_datagen, target, batch)
 
             model = load_model(Path.classic_model_tf)
             model.load_weights(Path.best_weights_tf)
 
-            loss, accuracy = model.evaluate(test_generator)
-            mlflow.log_metric("test_loss", loss)
-            mlflow.log_metric("test_accuracy", accuracy)
+            predictions = model.predict(test_generator)
+            # predicted_classes = predictions.argmax(axis=1)
+            predicted_classes = np.where(predictions > 0.5, 1, 0).flatten()
+
+            true_classes = test_generator.classes
+            true_classes = true_classes[: len(predicted_classes)]
+            print(len(true_classes), len(predicted_classes))
+            print(true_classes, predicted_classes)
+
+            correct_predictions = np.sum(true_classes == predicted_classes)
+            print(correct_predictions)
+            total_predictions = len(true_classes)
+            accuracy = correct_predictions / total_predictions
+            print(f'Accuracy: {accuracy * 100:.2f}%')
+
+            #plot_confusion_matrix(
+            #    true_classes, predicted_classes, Path.confusion_matrix_tf
+            #)
+
+            loss, accuracy = model.evaluate(test_generator, batch=300)
+            #mlflow.log_metric("test_loss", loss)
+            #mlflow.log_metric("test_accuracy", accuracy)
+            print(f'Loss: {loss}')
+            print(f'Accuracy: {accuracy}')

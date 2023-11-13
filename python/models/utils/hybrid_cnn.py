@@ -12,7 +12,7 @@ from qiskit.visualization import circuit_drawer
 from qiskit_machine_learning.connectors import TorchConnector
 from qiskit_machine_learning.neural_networks import TwoLayerQNN
 import pennylane as qml
-
+import numpy as np
 # Own libraries
 from python.ibm_quantum.utils.connect import get_ibm_quantum
 from qiskit.circuit import QuantumCircuit, Parameter
@@ -34,17 +34,32 @@ def custom_ansatz(num_qubits):
     return circuit, params
 
 
-
 n_qubits = 2
 n_layers = 6
 dev = qml.device("default.qubit", wires=n_qubits)
-weight_shapes = {"weights": (n_layers, n_qubits)}
-#eight_shapes = {"angles": (n_qubits, 3)}
+# weight_shapes = {"weights": (n_layers, n_qubits)}
+# weight_shapes = {"angles": (n_qubits, 3)}
+weight_shapes = {"weights_ry": (n_layers, n_qubits), "weights_rz": (n_layers, n_qubits)}
+
 
 @qml.qnode(dev)
 def qnode(inputs, weights):
     qml.AngleEmbedding(inputs, wires=range(n_qubits), rotation='Z')
-    qml.BasicEntanglerLayers(weights, wires=range(n_qubits))
+    qml.StronglyEntanglingLayers(weights, wires=range(n_qubits))
+    return [qml.expval(qml.PauliZ(wires=i)) for i in range(n_qubits)]
+
+
+@qml.qnode(dev)
+def circuit(inputs, weights_ry, weights_rz):
+    qml.AngleEmbedding(inputs, wires=range(n_qubits), rotation='Y')
+    for layer in range(n_layers):
+        for i, weight in enumerate(weights_ry[layer]):
+            qml.RY(weight, wires=i)
+        for i, weight in enumerate(weights_rz[layer]):
+            qml.RZ(weight, wires=i)
+        for i in range(n_qubits - 1):
+            qml.CNOT(wires=[i, i + 1])
+        qml.CNOT(wires=[n_qubits - 1, 0])
     return [qml.expval(qml.PauliZ(wires=i)) for i in range(n_qubits)]
 
 
@@ -102,8 +117,10 @@ class HybridCNNPenny(nn.Module):
         self.fc0 = nn.Linear(in_features=512 * 2 * 2, out_features=4096)
         self.fc1 = nn.Linear(in_features=4096, out_features=2048)
         self.fc2 = nn.Linear(in_features=2048, out_features=2)
-        self.qnn = qml.qnn.TorchLayer(qnode, weight_shapes)
-        self.fc3 = nn.Linear(2, 1)
+        self.qnn1 = qml.qnn.TorchLayer(circuit, weight_shapes)
+        self.qnn2 = qml.qnn.TorchLayer(qnode, weight_shapes)
+        self.fc3 = nn.Linear(in_features=4, out_features=2)
+        self.fc4 = nn.Linear(in_features=2, out_features=1)
 
     def forward(self, x):
         x = F.relu(self.bn0(self.conv0(x)))
@@ -123,8 +140,14 @@ class HybridCNNPenny(nn.Module):
         x = F.relu(self.fc1(x))
         # x = self.dropout(x)
         x = F.relu(self.fc2(x))
-        x = self.qnn(x)
-        x = F.sigmoid(self.fc3(x))
+        # x = self.qnn(x)
+        # x_1, x_2 = torch.split(x, 2, dim=1)
+        # x_1 = self.qnn1(x_1)
+        # x_2 = self.qnn2(x_2)
+        # x = torch.cat([x_1, x_2], axis=1)
+        x = self.qnn1(x)
+        # x = F.relu(self.fc3(x))
+        x = F.sigmoid(self.fc4(x))
 
         return x
 
