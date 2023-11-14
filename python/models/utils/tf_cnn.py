@@ -117,16 +117,7 @@ def image_generator(data: str) -> ImageDataGenerator:
         NotImplementedError: Si el valor de 'data' no es 'train' ni 'test'.
 
     """
-    if data == 'train':
-        datagen = ImageDataGenerator(
-            rescale=1.0 / 255.0,  # Reescala los valores de píxeles a [0, 1]
-            # rotation_range=20,  # Rotación aleatoria de la imagen
-            # width_shift_range=0.2,  # Cambio aleatorio en el ancho
-            # height_shift_range=0.2,  # Cambio aleatorio en la altura
-            # horizontal_flip=True,  # Volteo horizontal aleatorio
-            # fill_mode='nearest',  # Modo de relleno para aumentar el tamaño
-        )
-    elif data == 'test':
+    if data == 'train' or data == 'test':
         datagen = ImageDataGenerator(rescale=1.0 / 255.0)
     else:
         raise NotImplementedError('Solo se acepta train o test')
@@ -159,6 +150,7 @@ def flow_generator(
         target_size=target,  # Tamaño objetivo de las imágenes
         batch_size=batch,  # Tamaño del lote
         class_mode='binary',
+        shuffle=False
     )
 
     return generator
