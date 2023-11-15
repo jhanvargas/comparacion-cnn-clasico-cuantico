@@ -2,12 +2,12 @@
 import torch
 from torch.utils.data.dataloader import DataLoader
 from torchinfo import summary
-
+import matplotlib.pyplot as plt
 # Own libraries
 from python.metadata.path import Path
 from python.models.utils.tf_cnn import plot_confusion_matrix
 from python.models.utils.hybrid_cnn import (
-    HybridCNN, HybridCNNPenny, create_qnn, save_q_circuit
+    HybridCNN, HybridCNNPenny, create_qnn, save_q_circuit, circuit
 )
 from python.models.utils.torch_cnn import (
     LoadDataset,
@@ -61,6 +61,22 @@ def hybrid_model():
             model = HybridCNNPenny().to(device)
 
         optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
+
+        n_qubits = 2
+        n_layers = 8
+
+        inputs = torch.rand(n_qubits)
+        weights_ry = torch.rand((n_layers, n_qubits))
+        weights_rz = torch.rand((n_layers, n_qubits))
+
+        drawer = qml.draw(circuit)
+        circuit_diagram = drawer(inputs=inputs, weights_ry=weights_ry, weights_rz=weights_rz)
+        print(circuit_diagram)
+
+        fig, ax = plt.subplots()
+        ax.text(0.5, 0.5, circuit_diagram, fontsize=12, va='center', ha='center')
+        ax.axis('off')
+        plt.show()
 
         hist = fit_model(
             model=model,

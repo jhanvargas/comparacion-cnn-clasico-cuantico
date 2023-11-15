@@ -7,7 +7,7 @@ dataset:
 cnn_models:
     tf_cnn_classic:
         train: False
-        test: False
+        test: True
         l2_regularizer: null
         batch_size: 32
         input_target: [32, 32]
@@ -18,18 +18,18 @@ cnn_models:
 
     torch_cnn_classic:
         train: False
-        test: False
+        test: True
         batch_size: 32
         input_target: [ 32, 1, 32, 32 ]
         epochs: 100
         learning_rate: 0.001
 
     hybrid_cnn:
-        train: True
-        test: False
+        train: False
+        test: True
         batch_size: 32
         input_target: [ 32, 1, 32, 32 ]
-        epochs: 10
-        learning_rate: 0.001
+        epochs: 100
+        learning_rate: 0.0001
         backend: False
-        structure: qiskit
+        structure: penny
