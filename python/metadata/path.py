@@ -28,6 +28,9 @@ class Path:
     confusion_matrix_tf = os.path.join('output', 'confusion_matrix_tf.png')
     """Imagen con matriz de confusión de CNN clásica con Tensorflow."""
 
+    confusion_matrix_torch = os.path.join('output', 'confusion_matrix_torch.png')
+    """Imagen con matriz de confusión de CNN clásica con PyTorch."""
+
     data = os.path.join('..', '..', 'data')
     """Ruta de data desde modulo de ejemplos."""
 

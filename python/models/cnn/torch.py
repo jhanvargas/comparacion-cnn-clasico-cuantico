@@ -6,6 +6,7 @@ from torchinfo import summary
 
 # Own libraries
 from python.metadata.path import Path
+from python.models.utils.tf_cnn import plot_confusion_matrix
 from python.models.utils.torch_cnn import (
     LoadDataset,
     TorchCNN,
@@ -75,6 +76,28 @@ def torch_model() -> None:
         model = TorchCNN().to(device)
         model.load_state_dict(torch.load(Path.classic_model_torch))
 
-        test_loss, test_acc = predict_data(model, test_loader, loss_function)
+        model.eval()
+
+        predicciones = []
+        etiquetas = []
+
+        with torch.no_grad():
+            for data in test_loader:
+                inputs, label = data 
+                inputs = inputs.to(device)
+
+                outputs = model(inputs)
+
+                predicted = (outputs > 0.5).int() 
+                predicted = [pred[0].item() for pred in predicted]
+
+                predicciones.extend(predicted)
+                etiquetas.extend(label.numpy()) 
+
+        plot_confusion_matrix(
+                etiquetas, predicciones, Path.confusion_matrix_torch
+            )
+
+        _, test_acc = predict_data(model, test_loader, loss_function)
 
         print(f'Accuracy: {test_acc}')

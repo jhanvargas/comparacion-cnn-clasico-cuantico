@@ -214,8 +214,18 @@ def plot_confusion_matrix(
     conf_matrix = confusion_matrix(true_classes, predicted_classes)
 
     plt.figure(figsize=(10, 8))
+    
     sns.set(font_scale=1.5)
-    sns.heatmap(conf_matrix, annot=True, fmt='d', cmap='Blues')
+
+    sns.heatmap(
+        conf_matrix, 
+        annot=True, 
+        fmt='d', 
+        cmap='Blues', 
+        xticklabels=['Other', 'Portrait'], 
+        yticklabels=['Other', 'Portrait']
+    )
+
     plt.title('Matriz de Confusión')
     plt.xlabel('Etiquetas Predichas', fontsize=14)
     plt.ylabel('Etiquetas Verdaderas', fontsize=14)

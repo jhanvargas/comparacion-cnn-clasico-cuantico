@@ -80,116 +80,76 @@ class LoadDataset(Dataset):
 
 
 class TorchCNN(nn.Module):
-    """Clase que define una red neuronal convolucional (CNN) en PyTorch.
+    """Clase que define una red neuronal convolucional en PyTorch.
 
-    Args:
-        Ninguno.
+    Atributos:
+        conv0 (nn.Conv2d): Capa de convolución 2D con 16 filtros de 3x3 
+         y padding de 1.
+        bn0 (nn.BatchNorm2d): Capa de normalización por lotes con 16 canales.
+        conv1 (nn.Conv2d): Capa de convolución 2D con 32 filtros de 3x3 
+         y padding de 1.
+        bn1 (nn.BatchNorm2d): Capa de normalización por lotes con 32 canales.
+        conv2 (nn.Conv2d): Capa de convolución 2D con 64 filtros de 3x3 
+         y padding de 1.
+        bn2 (nn.BatchNorm2d): Capa de normalización por lotes con 64 canales.
+        conv3 (nn.Conv2d): Capa de convolución 2D con 128 filtros de 3x3  
+         y padding de 1.
+        bn3 (nn.BatchNorm2d): Capa de normalización por lotes con 128 canales.
+        max_pool (nn.MaxPool2d): Capa de pooling máximo 2D con kernel de 2x2 
+         y stride de 2.
+        dropout (nn.Dropout): Capa de dropout con probabilidad de 0.5.
+        fc0 (nn.Linear): Capa de red neuronal completamente conectada con 
+         128*2*2 entradas y 1024 salidas.
+        fc1 (nn.Linear): Capa de red neuronal completamente conectada con 
+         1024 entradas y 32 salidas.
+        fc2 (nn.Linear): Capa de red neuronal completamente conectada con 
+         32 entradas y 1 salida.
 
-    Attributes:
-        conv0 (nn.Conv2d): Capa de convolución 2D.
-        bn0 (nn.BatchNorm2d): Capa de normalización por lotes.
-        max_pool (nn.MaxPool2d): Capa de max-pooling.
-        conv1 (nn.Conv2d): Capa de convolución 2D.
-        bn1 (nn.BatchNorm2d): Capa de normalización por lotes.
-        conv2 (nn.Conv2d): Capa de convolución 2D.
-        bn2 (nn.BatchNorm2d): Capa de normalización por lotes.
-        conv3 (nn.Conv2d): Capa de convolución 2D.
-        bn3 (nn.BatchNorm2d): Capa de normalización por lotes.
-        dropout (nn.Dropout): Capa de dropout para regularización.
-        fc0 (nn.Linear): Capa de conexión completamente conectada.
-        fc1 (nn.Linear): Capa de conexión completamente conectada.
-        fc2 (nn.Linear): Capa de conexión completamente conectada.
-
-    Methods:
-        forward(x): Define el flujo hacia adelante de la red.
-
-    Examples:
-        model = TorchCNN()
+    Métodos:
+        forward(x): Realiza una pasada hacia adelante por la red neuronal.
 
     """
-
     def __init__(self):
-        """Inicializa una instancia de la clase TorchCNN."""
+        super(TorchCNN, self).__init__()
 
-        super().__init__()
         self.conv0 = nn.Conv2d(
-            in_channels=1,
-            out_channels=64,
-            kernel_size=(3, 3),
-            stride=(1, 1),
-            padding=(1, 1),
-            bias=False,
+            in_channels=1, out_channels=16, kernel_size=3, padding=1
         )
-        self.bn0 = nn.BatchNorm2d(num_features=64)
-        self.max_pool = nn.MaxPool2d(kernel_size=(2, 2), stride=(2, 2))
-
+        self.bn0 = nn.BatchNorm2d(num_features=16)
         self.conv1 = nn.Conv2d(
-            in_channels=64,
-            out_channels=128,
-            kernel_size=(3, 3),
-            stride=(1, 1),
-            padding=(1, 1),
-            bias=False,
+            in_channels=16, out_channels=32, kernel_size=3, padding=1
         )
-        self.bn1 = nn.BatchNorm2d(num_features=128)
-        # self.max_pool
-
+        self.bn1 = nn.BatchNorm2d(num_features=32)
         self.conv2 = nn.Conv2d(
-            in_channels=128,
-            out_channels=256,
-            kernel_size=(3, 3),
-            stride=(1, 1),
-            padding=(1, 1),
-            bias=False,
+            in_channels=32, out_channels=64, kernel_size=3, padding=1
         )
-        self.bn2 = nn.BatchNorm2d(num_features=256)
-        # self.max_pool
-
+        self.bn2 = nn.BatchNorm2d(num_features=64)
         self.conv3 = nn.Conv2d(
-            in_channels=256,
-            out_channels=512,
-            kernel_size=(3, 3),
-            stride=(1, 1),
-            padding=(1, 1),
-            bias=False,
+            in_channels=64, out_channels=128, kernel_size=3, padding=1
         )
-        self.bn3 = nn.BatchNorm2d(num_features=512)
-        # self.max_pool
-
+        self.bn3 = nn.BatchNorm2d(num_features=128)
+        self.max_pool = nn.MaxPool2d(kernel_size=2, stride=2)
         self.dropout = nn.Dropout(p=0.5)
-        self.fc0 = nn.Linear(in_features=512 * 8 * 8, out_features=2048)
-        self.fc1 = nn.Linear(in_features=2048, out_features=128)
-        self.fc2 = nn.Linear(in_features=128, out_features=1)
 
-    def forward(self, x: torch.Tensor) -> torch.Tensor:
-        """Define el flujo hacia adelante de la red.
+        self.fc0 = nn.Linear(in_features=128 * 2 * 2, out_features=1024)
+        self.fc1 = nn.Linear(in_features=1024, out_features=32)
+        self.fc2 = nn.Linear(in_features=32, out_features=1)
 
-        Args:
-            x: Tensor de entrada.
-
-        Returns:
-            Tensor de salida.
-
-        """
+    def forward(self, x):
         x = F.relu(self.bn0(self.conv0(x)))
-        #x = self.max_pool(x)
-        x = self.dropout(x)
-
+        x = self.max_pool(x)
         x = F.relu(self.bn1(self.conv1(x)))
         x = self.max_pool(x)
-
         x = F.relu(self.bn2(self.conv2(x)))
-        #x = self.max_pool(x)
-        x = self.dropout(x)
-
+        x = self.max_pool(x)
         x = F.relu(self.bn3(self.conv3(x)))
         x = self.max_pool(x)
-
-        x = x.reshape(x.shape[0], -1)
-
         x = self.dropout(x)
+        x = x.view(x.size(0), -1)
         x = F.relu(self.fc0(x))
+        x = self.dropout(x)
         x = F.relu(self.fc1(x))
+        x = self.dropout(x)
         x = F.sigmoid(self.fc2(x))
 
         return x
@@ -292,6 +252,7 @@ def fit_model(
     optimizer: callable,
     epochs: int = 10,
     structure: str = 'classic',
+    patience: int = 10,
 ) -> dict:
     """Entrena un modelo de red neuronal de PyTorch.
 
@@ -309,6 +270,9 @@ def fit_model(
 
     """
     train_losses, test_losses, train_accuracy, test_accuracy = [], [], [], []
+
+    best_val_loss = float('inf')
+    early_stopping_counter = 0
 
     for epoch in range(epochs):
         num_correct_train = 0
@@ -345,6 +309,16 @@ def fit_model(
         test_losses.append(test_loss.item())
         train_accuracy.append(train_acc.item())
         test_accuracy.append(test_acc.item())
+
+        if test_loss < best_val_loss:
+            best_val_loss = test_loss
+            early_stopping_counter = 0
+            # Aquí también podrías guardar el modelo si es el mejor hasta ahora
+        else:
+            early_stopping_counter += 1
+            if early_stopping_counter >= patience:
+                print(f'Parada temprana después de {epoch + 1} épocas.')
+                break
 
         print(
             f'Epoch {epoch + 1} '
