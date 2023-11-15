@@ -322,10 +322,10 @@ def fit_model(
 
         print(
             f'Epoch {epoch + 1} '
-            f'| Train Loss: {train_loss.item():.4f} '
-            f'| Test Loss: {test_loss.item():.4f} '
-            f'| Train Acc: {train_acc.item() * 100:.2f}% '
-            f'| Test Acc: {test_acc.item() * 100:.2f}%'
+            f'| Train Loss: {train_loss.item()}'
+            f'| Test Loss: {test_loss.item()}'
+            f'| Train Acc: {train_acc.item()}'
+            f'| Test Acc: {test_acc.item()}'
         )
 
     hist = {
