@@ -98,6 +98,6 @@ def torch_model() -> None:
                 etiquetas, predicciones, Path.confusion_matrix_torch
             )
 
-        _, test_acc = predict_data(model, test_loader, loss_function)
+        loss_test, test_acc = predict_data(model, test_loader, loss_function)
 
-        print(f'Accuracy: {test_acc}')
+        print(f'loss: {loss_test} - accuracy: {test_acc}')
