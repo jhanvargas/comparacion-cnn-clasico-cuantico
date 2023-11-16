@@ -40,4 +40,10 @@ Se recomienda la instalación a través de `pip`, utilizando el siguiente comand
 pip install pennylane
 ```
 
+## Despliegue aplicación
+
+El API de este proyecto se construye utilizando FastAPI, un moderno framework web de Python que es rápido, fácil de usar y viene con soporte para tipos de datos estándar. FastAPI facilita la creación de interfaces de programación de aplicaciones (APIs) con documentación automática a través de Swagger y ReDoc, y es compatible con las operaciones asincrónicas.
+
+Uvicorn, un servidor ASGI liviano, se emplea para servir el API, proporcionando un rendimiento superior gracias a su naturaleza asincrónica. Para iniciar el API, se utiliza el archivo `main.py`, que actúa como el punto de entrada del servidor FastAPI. Al ejecutar main.py con Uvicorn, se pone en marcha el API, haciéndolo accesible a través de un host y puerto especificado, listo para recibir peticiones HTTP y responder a ellas según las rutas y operaciones definidas en el código.
+
 ![Alt text](/output/api.png)
