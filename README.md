@@ -2,22 +2,22 @@
 
 ## Evaluación del impacto de la computación cuántica en la clasificación de imágenes mediante modelos de CNN
 
-El repositorio tiene como objetivo comparar el desempeño de modelos de redes neuronales convolucionales (CNN) aplicados 
-al conjunto de datos CIFAR-10, utilizando tanto computación clásica como cuántica. En el repositorio se incluyen los 
-códigos implementados en Python para entrenar y evaluar los modelos en ambas plataformas, así como también los 
-resultados obtenidos y una breve documentación explicando los pasos necesarios para replicar el experimento.
-
-Además, se incluirá una sección con una breve introducción a la computación cuántica y su relación con el aprendizaje
-automático, así como una revisión bibliográfica de trabajos previos relacionados con la comparación de modelos de 
-aprendizaje automático entre computación clásica y cuántica. El objetivo final es proporcionar una comparación 
-práctica y replicable de la eficacia y eficiencia de los modelos de CNN en ambas plataformas y ayudar a establecer 
-un punto de partida para futuras investigaciones en el área.
-
+Este proyecto explora la integración de la computación cuántica en la clasificación de imágenes mediante Redes Neuronales Convolucionales (CNN). Se comparan modelos tradicionales de CNN desarrollados con TensorFlow y PyTorch frente a un modelo híbrido que incorpora un circuito cuántico, utilizando un conjunto de datos de retratos para la clasificación binaria. Los resultados muestran que, aunque los modelos clásicos presentan un rendimiento ligeramente superior, el modelo híbrido cuántico muestra un potencial prometedor. El estudio subraya la viabilidad de la computación cuántica en el aprendizaje profundo y abre caminos para futuras investigaciones en este campo emergente
 
 ## Funcionamiento del repositorio
 
-Dentro del directorio `docs` se encuentra el entregable II de seminario.
-El notebbook con la exploración se encuentra en la ruta `python/jupyer_notebooks/`.
+El repositorio contiene varios componentes esenciales para la ejecución y evaluación de modelos de redes neuronales, tanto convencionales como cuánticos:
+
+`api`: Incluye herramientas de API, presumiblemente para la interacción con modelos entrenados o servicios externos.
+`output`: Almacena los resultados de los modelos, especialmente útil para el modelo híbrido.
+`python`: Contiene scripts de Python para diferentes propósitos, incluyendo ejemplos de uso, ingeniería de características, y ejemplos específicos de IBM Quantum.
+`.gitignore`: Especifica qué archivos y carpetas deben ignorarse en las subidas de git.
+`README.md`: Ofrece una explicación detallada del proyecto y sus componentes.
+`config.py` y config.yaml: Contienen configuraciones, posiblemente para modelos o la API.
+`main.py`: El script principal para ejecutar el API del proyecto.
+`requirements.txt`: Lista las dependencias necesarias para el proyecto.
+`run.py`: Script para ejecutar ciertas tareas o modelos.
+Dentro del directorio python, hay más carpetas para organización modular, como jupyter_notebooks para exploración y experimentación, models para almacenar los modelos entrenados, y utils para funciones auxiliares.
 
 
 ## Instalación Qiskit
@@ -30,8 +30,14 @@ Se recomienda la instalación a través de `pip`, utilizando el siguiente comand
 pip install qiskit
 ```
 
-También es posible realizar la instalación utilizando `conda`, mediante el siguiente comando:
+## Instalación PennyLane
+
+Para poder utilizar el modelo de CNN cuántico, es necesario instalar la librería Qiskit en tu entorno de desarrollo.
+Se recomienda la instalación a través de `pip`, utilizando el siguiente comando:
+
 
 ```python
-conda install -c conda-forge qiskit
+pip install pennylane
 ```
+
+![Alt text](/output/api.png)
